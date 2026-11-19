@@ -8,3 +8,5 @@ include <geometry.scad>
 include <chamfers.scad>
 include <threads.scad>
 include <multimaterial.scad>
+include <gears.scad>
+include <extrusions.scad>

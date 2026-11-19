@@ -39,3 +39,23 @@ OPTSYS_POST_BOTTOM_THREAD = "M6";
 // Metric breadboard: M6 holes on a 25 mm grid.
 OPTSYS_BREADBOARD_PITCH = 25;
 OPTSYS_BREADBOARD_THREAD = "M6";
+
+// Aluminium extrusions (slotted profiles):
+// [name, size, slot opening, V width at the face (90 deg V), lip thickness,
+//  slot depth (face to cavity floor), cavity width, core bore]
+// "2020V" = 2020 V-slot (OpenBuilds type): 20 x 20, 6.2 mm slot, 90 deg V,
+// 4.2 mm core (tapped M5 by default; a 4.2 core can also take an M4 tap).
+// The V width and the slot cavity reproduce the tested OptSys rail
+// carriage and rack (PETG-CF, Nov 2026); check them against your profile.
+OPTSYS_EXTRUSIONS = [
+    ["2020V", 20, 6.2, 9.26, 1.9, 6.0, 11.0, 4.2],
+];
+
+function _extrusion(name) = OPTSYS_EXTRUSIONS[search([str(name)], OPTSYS_EXTRUSIONS)[0]];
+function extrusion_size(name)      = _extrusion(name)[1];
+function extrusion_slot_w(name)    = _extrusion(name)[2];
+function extrusion_v_w(name)       = _extrusion(name)[3];
+function extrusion_lip_t(name)     = _extrusion(name)[4];
+function extrusion_slot_depth(name)= _extrusion(name)[5];
+function extrusion_cavity_w(name)  = _extrusion(name)[6];
+function extrusion_core_d(name)    = _extrusion(name)[7];

@@ -9,6 +9,7 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 | Part | Folder | Standards | Description |
 |---|---|---|---|
 | Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | 60 mm, OptSys 100 | Lens mount with retaining-ring thread, magnetic bellows recess, compliant rod clamps, optional TPU hinges and post mount |
+| Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
 
 ## Interface standards
 
@@ -21,7 +22,7 @@ Defined once in [`lib/standards.scad`](lib/standards.scad) and used by every par
 | `60mm` | 60 mm | Ø6 | SM2 (2.035"-40) | 71.1 mm |
 | `100mm` (OptSys) | 85 mm | Ø8 | M64×1.5 | 100 mm |
 
-The 16/30/60 mm rows match the Thorlabs cage standards. Metric posts are Ø12.7 mm with M4 on top and M6 at the bottom; metric breadboards use M6 holes on a 25 mm grid.
+The 16/30/60 mm rows match the Thorlabs cage standards. Extrusions (`OPTSYS_EXTRUSIONS`, currently `2020V` = 2020 V-slot) and ball bearings (`OPTSYS_BEARINGS`, MR84ZZ to 608ZZ) are defined there too. Metric posts are Ø12.7 mm with M4 on top and M6 at the bottom; metric breadboards use M6 holes on a 25 mm grid.
 
 Note: the SM thread series are 40 TPI (0.635 mm pitch), at the limit of FDM printing. OptSys parts use coarser threads (1.5 mm pitch) for their own interfaces; test before relying on printed SM threads with commercial lens tubes.
 
@@ -30,12 +31,14 @@ Note: the SM thread series are 40 TPI (0.635 mm pitch), at the limit of FDM prin
 ```
 lib/                     shared code, no output of its own
   optsys.scad            entry point: use <../../lib/optsys.scad>
-  standards.scad         cage, thread and post standards
-  hardware.scad          metric nuts / clearance holes, captive nut slots
-  geometry.scad          2D/3D helpers (sectors, closing, mirror4, ...)
+  standards.scad         cage, thread, post and extrusion standards
+  hardware.scad          metric nuts / clearance holes, captive nut slots, bearings
+  geometry.scad          2D/3D helpers (sectors, closing, mirror4, chamfered boxes, ...)
   chamfers.scad          chamfered extrusions, drafted pockets
   threads.scad           printable internal/external threads
   multimaterial.scad     dovetails for rigid + TPU parts
+  gears.scad             involute spur gears and racks
+  extrusions.scad        slotted profile outlines (ghost previews)
 parts/<family>/          one folder per part family
   <part>.scad            the part, with Customizer parameters
   <part>.json            Customizer presets (same base name)

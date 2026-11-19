@@ -1,0 +1,28 @@
+{
+    "parameterSets": {
+        "XY carriage (top mount, stackable)": {
+            "mount": "top",
+            "body_len": 40,
+            "body_w": 40,
+            "body_h": 30,
+            "pinion_x": 0,
+            "pinion_slot_w": 6.3,
+            "tap_holes": "true"
+        },
+        "Z carriage (side tower)": {
+            "mount": "side",
+            "body_len": 30,
+            "body_w": 40,
+            "body_h": 18,
+            "pinion_x": -5,
+            "pinion_slot_w": 7,
+            "tower_t": 19,
+            "tower_h": 58,
+            "tower_grid_y": 25,
+            "tower_hole_z": 32.5,
+            "tower_grid_z": 18,
+            "tower_rows": 2
+        }
+    },
+    "fileFormatVersion": "1"
+}
