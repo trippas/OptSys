@@ -1,4 +1,6 @@
 // =====================================================================
+//  OptSys - lens cage plate
+//
 //  Parametric cage plate - lens mount with a thread for a retaining
 //  ring, recess for a magnetic bellows (both faces) and compliant
 //  clamps for 4 steel rods.
@@ -12,7 +14,11 @@
 //
 //  Coordinates: plate from z=0 to z=plate_t. The z=plate_t face is the
 //  "front" (thread side, nut slots open on this face).
+//
+//  Shared code (threads, chamfers, standards, ...) lives in ../../lib.
 // =====================================================================
+
+use <../../lib/optsys.scad>
 
 /* [Output] */
 // What to generate
@@ -192,8 +198,8 @@ is60 = str(standard) == "60mm" || str(standard) == "60";
 function std(v100, v60) = is60 ? v60 : v100;
 function pick(set, v100, v60) = set > 0 ? set : std(v100, v60);
 
-rod_d         = pick(rod_d_set,         8,    6);
-rod_c         = pick(rod_c_set,         42.5, 30);
+rod_d         = pick(rod_d_set,         cage_rod_d("100mm"), cage_rod_d("60mm"));
+rod_c         = pick(rod_c_set,         cage_rod_spacing("100mm") / 2, cage_rod_spacing("60mm") / 2);
 lens_d        = pick(lens_d_set,        60,   38.1);   // 60 mm: Ø1.5"
 hinge_y       = pick(hinge_y_set,       17.5, 14.5);
 nut_x_off     = pick(nut_x_off_set,     4.5,  3.5);
@@ -210,7 +216,7 @@ magnet_offset = pick(magnet_offset_set, 26.5, 18.3);
 // Lens -> aperture, thread and ring
 aperture_d = aperture_d_set > 0 ? aperture_d_set : lens_d - 2 * lens_ledge;
 thread_d   = thread_d_set   > 0 ? thread_d_set   : ceil(lens_d + 2 * thread_margin);
-thread_D1  = thread_d - 1.082532 * thread_pitch;      // minor diameter (crests of the internal thread)
+thread_D1  = thread_minor_d(thread_d, thread_pitch);   // minor diameter (crests of the internal thread)
 ring_id    = ring_id_set    > 0 ? ring_id_set    : lens_d - 2 * ring_overlap;
 
 seat_r   = (rod_d + rod_clearance) / 2;
@@ -280,84 +286,6 @@ assert(!any_recess || lobe_reach + recess_draft + 1.5 <= plate_w / 2, "The notch
 assert(notch_cx + notch_w / 2 < plate_w / 2, "The hinge does not fit: reduce tpu_hinge_w / hinge_w");
 
 // ---------------------------------------------------------------------
-// 2D / 3D utilities
-// ---------------------------------------------------------------------
-module closing2d(r) { offset(r = -r) offset(r = r) children(); }
-
-module sector2d(r, a0, a1, n = 48) {
-    polygon(concat([[0, 0]], [for (i = [0:n]) let(a = a0 + (a1 - a0) * i / n) r * [cos(a), sin(a)]]));
-}
-
-module annular_sector2d(r0, r1, a0, a1) {
-    difference() { sector2d(r1, a0, a1); circle(r0); }
-}
-
-module mirror4() {
-    for (mx = [0, 1], my = [0, 1])
-        mirror([mx, 0, 0]) mirror([0, my, 0]) children();
-}
-
-// Extrusion with a 45 deg chamfer top and bottom (convex outline edges)
-module chamfered_extrude(h, c) {
-    if (c <= 0) linear_extrude(h) children();
-    else if (chamfer_steps == 0)
-        minkowski() {
-            translate([0, 0, c]) linear_extrude(h - 2 * c) offset(delta = -c) children();
-            hull() { cylinder(r1 = c, r2 = 0, h = c, $fn = 16); mirror([0, 0, 1]) cylinder(r1 = c, r2 = 0, h = c, $fn = 16); }
-        }
-    else union() {
-        n = chamfer_steps;
-        translate([0, 0, c - eps]) linear_extrude(h - 2 * c + 2 * eps) children();
-        for (i = [0:n - 1]) {
-            d  = c * (1 - (i + 0.5) / n);
-            z0 = c * i / n;
-            translate([0, 0, z0]) linear_extrude(c / n + eps) offset(delta = -d) children();
-            translate([0, 0, h - z0 - c / n - eps]) linear_extrude(c / n + eps) offset(delta = -d) children();
-        }
-    }
-}
-
-// Pocket with an exact 45 deg wall for a CONVEX 2D piece:
-// hull between the piece at the floor and the grown piece at the top.
-// (minkowski with a cone = hull when the piece is convex)
-module drafted_convex(depth, draft) {
-    k = draft / depth;
-    hull() {
-        linear_extrude(eps) children();
-        translate([0, 0, depth + 1 - eps]) linear_extrude(eps) offset(r = k * (depth + 1)) children();
-    }
-}
-// ---------------------------------------------------------------------
-// Thread: helical solid r(theta, z). Used as a cutter (internal
-// thread) or as a solid (external thread). ISO trapezoidal profile:
-// P/8 flat at rmax, P/4 flat at rmin, 60 deg flanks.
-// ---------------------------------------------------------------------
-function pmod(a, b) = a - b * floor(a / b);
-function thr_r(u, P, rmin, rmax) =
-    let(fh = P / 8, fl = P / 4, dz = (P - fh - fl) / 2)
-    u < fh ? rmax :
-    u < fh + dz ? rmax - (rmax - rmin) * (u - fh) / dz :
-    u < fh + dz + fl ? rmin :
-    rmin + (rmax - rmin) * (u - fh - dz - fl) / dz;
-
-module helix_solid(h, P, rmin, rmax, N = thread_fn, zres = thread_zres) {
-    nz = max(2, ceil(h / (P / zres)));
-    pts = concat(
-        [for (j = [0:nz]) for (i = [0:N - 1])
-            let(z = h * j / nz, th = 360 * i / N, r = thr_r(pmod(z - P * th / 360, P), P, rmin, rmax))
-            [r * cos(th), r * sin(th), z]],
-        [[0, 0, 0], [0, 0, h]]);
-    B = (nz + 1) * N; T = B + 1;
-    faces = concat(
-        [for (j = [0:nz - 1]) for (i = [0:N - 1]) each [
-            [j * N + i, (j + 1) * N + i, (j + 1) * N + (i + 1) % N],
-            [j * N + i, (j + 1) * N + (i + 1) % N, j * N + (i + 1) % N]]],
-        [for (i = [0:N - 1]) [B, i, (i + 1) % N]],
-        [for (i = [0:N - 1]) [T, nz * N + (i + 1) % N, nz * N + i]]);
-    polyhedron(pts, faces, convexity = 6);
-}
-
-// ---------------------------------------------------------------------
 // 2D plate outline (+x,+y quadrant; mirrored to all 4)
 // ---------------------------------------------------------------------
 module arm_top2d() {
@@ -405,12 +333,6 @@ module outline2d() {
 // ---------------------------------------------------------------------
 // Bellows recess
 // ---------------------------------------------------------------------
-module chamfered_square2d(s, c) {
-    h = s / 2;
-    polygon([[h - c, h], [-h + c, h], [-h, h - c], [-h, -h + c],
-             [-h + c, -h], [h - c, -h], [h, -h + c], [h, h - c]]);
-}
-
 module lobe2d() {
     hull() {
         for (s = [-1, 1]) translate([lobe_reach - lobe_r, s * (lobe_w / 2 - lobe_r)]) circle(lobe_r);
@@ -477,7 +399,7 @@ module screw_features() {
 // Outer body: outline + chamfers + screws (no central features)
 module outline_body() {
     difference() {
-        chamfered_extrude(plate_t, edge_chamfer) outline2d();
+        chamfered_extrude(plate_t, edge_chamfer, chamfer_steps, eps) outline2d();
         screw_features();
         post_features();
     }
@@ -493,8 +415,7 @@ module central_cuts() {
     translate([0, 0, z_fb + lip_h]) cylinder(d1 = aperture_d, d2 = lens_d, h = (lens_d - aperture_d) / 2 + eps);
     // thread
     if (thread_enable) {
-        translate([0, 0, z_ct]) helix_solid(thread_len + 0.5, thread_pitch,
-                                            thread_D1 / 2 + thread_clearance / 2, thread_d / 2 + thread_clearance / 2);
+        translate([0, 0, z_ct]) internal_thread_cutter(thread_d, thread_pitch, thread_len + 0.5, thread_clearance, thread_fn, thread_zres);
         // without a front recess the thread exits on the face: entry chamfer
         if (!recess_front) translate([0, 0, plate_t - 0.6]) cylinder(d1 = thread_d + thread_clearance, d2 = thread_d + thread_clearance + 1.2 + 2 * eps, h = 0.6 + eps);
     } else {
@@ -516,17 +437,12 @@ module plate() { difference() { render(convexity = 4) outline_body(); central_cu
 // TPU zones (+x,+y quadrant) - must stay clear of the central
 // features: the TPU part is computed as outline_body() ∩ region.
 // ---------------------------------------------------------------------
-module dovetail2d(up = true) {
-    polygon(up ? [[-dovetail_root / 2, -eps], [dovetail_root / 2, -eps], [dovetail_tip / 2, dovetail_h], [-dovetail_tip / 2, dovetail_h]]
-               : [[-dovetail_root / 2, eps], [dovetail_root / 2, eps], [dovetail_tip / 2, -dovetail_h], [-dovetail_tip / 2, -dovetail_h]]);
-}
-
 module hinge_region2d(with_top = true) {
     y0 = hinge_y - tpu_block_h;
     y1 = hinge_y + tpu_block_h;
     translate([rod_c, y0]) square([arm_r + 1, y1 - y0]);
-    if (with_top) translate([(rod_c + slot_w / 2 + plate_w / 2) / 2, y1]) dovetail2d(true);
-    translate([(rod_c + plate_w / 2) / 2, y0]) dovetail2d(false);
+    if (with_top) translate([(rod_c + slot_w / 2 + plate_w / 2) / 2, y1]) dovetail2d(dovetail_root, dovetail_tip, dovetail_h, true);
+    translate([(rod_c + plate_w / 2) / 2, y0]) dovetail2d(dovetail_root, dovetail_tip, dovetail_h, false);
 }
 
 liner_a0 = -acos((slot_w / 2 + seat_fillet) / (seat_r + seat_fillet)) + 5;   // starts past the slot fillet
@@ -574,7 +490,7 @@ module tpu_part() {
 // ---------------------------------------------------------------------
 module retaining_ring() {
     difference() {
-        helix_solid(ring_h, thread_pitch, thread_D1 / 2 - thread_clearance / 2, thread_d / 2 - thread_clearance / 2);
+        external_thread(thread_d, thread_pitch, ring_h, thread_clearance, thread_fn, thread_zres);
         translate([0, 0, -1]) cylinder(d = ring_id, h = ring_h + 2);
         for (a = [0, 180]) rotate(a) translate([ring_id / 2 - 1, -ring_slot_w / 2, ring_h - ring_slot_d]) cube([(thread_d - ring_id) / 2, ring_slot_w, ring_slot_d + 1]);
     }
