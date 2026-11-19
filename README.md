@@ -2,7 +2,9 @@
 
 An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate holds a lens with a threaded retaining ring, can carry a magnetic bellows on either face, and clamps onto four steel rods with compliant clamps. The hinges can optionally be printed in TPU (multi-material).
 
-![Overview](docs/overview.png)
+![100 mm and 60 mm plates](docs/plates.png)
+
+*Left: 100 mm standard, single material, with a post mount on the bottom side. Right: 60 mm standard with TPU hinges and rod seat liners (orange) and ghost rods (grey). Both rendered at the same scale.*
 
 ## Features
 
@@ -70,6 +72,6 @@ In `hinge` mode the rigid arms are separate islands in the rigid STL, held only 
 |---|---|
 | `lens_cage_plate.scad` | Parametric model |
 | `lens_cage_plate.json` | Customizer presets for each standard |
-| `docs/overview.png` | Overview image |
+| `docs/plates.png` | Renders of both standards |
 
 Exported meshes (`*.stl`, `*.3mf`) are not tracked; regenerate them from the `.scad`.
