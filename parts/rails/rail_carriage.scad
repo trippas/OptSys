@@ -85,17 +85,23 @@ pinion_backlash = 0.1; // [0:0.01:0.5]
 rack_backlash = 0.1; // [0:0.01:0.5]
 // Rack pitch line relative to the profile top face (+ = above)
 pitch_line_offset = -0.05; // [-2:0.01:2]
+// Moves the shaft, bearings and pinion up (+) or down relative to the carriage; the rack teeth follow (the rack gets taller) to keep the mesh. Raise it to keep the shaft hole away from the top tube seats (see console)
+drive_offset = 0; // [-1:0.05:5]
 // Pinion axis position along the rail, from the body center
 pinion_x = 0; // [-100:0.5:100]
 // Width of the slot the pinion turns in
 pinion_slot_w = 6.3; // [2:0.05:16]
-// Radial clearance around the pinion tips at the pocket sides
-pocket_clear = 0.8; // [0.2:0.05:3]
-// Clearance between the pinion tips and the 45 deg roof of the pocket (printed roofs sag)
-roof_clear = 1.3; // [0.2:0.05:5]
+// gable: 45 deg sides from the channel up to a flat top (no overhang when printed standing on an end face). compact: vertical sides near the pinion, stiffer, but they are overhangs when printed standing on an end
+pocket_style = "gable"; // [gable:Gable (print standing on an end), compact:Compact (print on the bottom face)]
+// Distance between the pinion tips and the 45 deg sides of the pocket (printed slopes sag)
+roof_clear = 1.75; // [0.2:0.05:5]
 // Clearance above the pinion tips (flat top of the pocket)
-pocket_top_clear = 1.5; // [0.2:0.05:5]
-// Optional slot for the rack teeth along the whole carriage (0 = none: the rack teeth pass under the channel ceiling)
+pocket_top_clear = 1.45; // [0.2:0.05:5]
+// compact pocket only: radial clearance at the vertical sides
+pocket_clear = 0.8; // [0.2:0.05:3]
+// Minimum wall between the pocket and the carriage end faces
+pocket_end_wall = 2; // [0.8:0.1:10]
+// Slot for the rack teeth along the whole carriage, height above the profile top (0 = automatic: only when the teeth reach the channel ceiling)
 rack_slot_h = 0; // [0:0.1:10]
 rack_slot_w = 6.3; // [2:0.05:16]
 
@@ -142,8 +148,11 @@ tower_cbore_d = 7.5; // [4:0.1:15]
 tower_cbore_depth = 13; // [0:0.5:100]
 
 /* [Pinion] */
-// solid: no bore. tap: tap drill to thread it onto an M4 rod. hex: M4 clearance + captive nut
-pinion_bore = "tap"; // [solid:Solid, tap:Tap drill (thread onto M4 rod), hex:Clearance + captive M4 nut]
+// d: D bore for a shaft with a flat (the pinion cannot slip). tap: tap drill to thread it onto an M4 rod. hex: M4 clearance + captive nut. solid: no bore
+pinion_bore = "d"; // [d:D bore (shaft with a flat), tap:Tap drill (thread onto M4 rod), hex:Clearance + captive M4 nut, solid:Solid]
+// D bore: diameter and size across the flat (from the flat to the opposite side), clearance included
+pinion_d_bore = 4.1; // [1:0.05:12]
+pinion_d_flat = 3.6; // [0.5:0.05:12]
 pinion_tap_d = 3.3; // [1:0.05:8]
 
 /* [Knob] */
@@ -211,7 +220,7 @@ lip_a     = v_a - lip_clear * sqrt(2);   // lip flank line: z + d = lip_a
 // gears
 rp      = gear_pitch_r(gear_module, pinion_teeth);
 ra      = gear_tip_r(gear_module, pinion_teeth);
-pitch_z = pz + h + pitch_line_offset;     // rack pitch line (absolute)
+pitch_z = pz + h + pitch_line_offset + drive_offset;   // rack pitch line (absolute)
 gz      = pitch_z + rp;                   // pinion axis height
 travel  = PI * gear_module * pinion_teeth;
 
@@ -225,8 +234,24 @@ b_in    = W / 2 - (b_w + bearing_recess);   // inner face of the bearing pockets
 pk_r    = ra + pocket_clear;
 pk_top  = gz + ra + pocket_top_clear;
 ceil_z  = pz + h + ceiling_gap;
-pk_k    = (ra + roof_clear) * sqrt(2);  // 45 deg roof tangent to the roof clearance circle
-pk_z45  = gz + pk_k - pk_r;             // the roof starts here, at x = ±pk_r
+pk_k    = (ra + roof_clear) * sqrt(2);  // 45 deg sides tangent to the roof clearance circle
+pk_z45  = gz + pk_k - pk_r;             // compact: the roof starts here, at x = ±pk_r
+pk_half_top = max(0.5, pk_k - (pk_top - gz));
+is_gable = str(pocket_style) != "compact";
+// half width of the pinion pocket (along X) at height z
+function pocket_half(z) = z > pk_top ? 0 :
+    max(pk_half_top, is_gable ? pk_k - (z - gz) : min(pk_r, pk_k - (z - gz)));
+pk_x0   = -L / 2 + pocket_end_wall;     // the pocket is clipped to keep the end walls
+pk_x1   = L / 2 - pocket_end_wall;
+
+// rack slot through the carriage (automatic when the rack teeth reach the ceiling)
+rack_tip = pitch_line_offset + drive_offset + gear_module;   // above the profile top face
+rs_h    = rack_slot_h > 0 ? rack_slot_h : (rack_tip + 0.25 > ceiling_gap ? rack_tip + 0.6 : 0);
+
+// shaft hole vs the top tube seats
+seat_top  = pz + top_tube[1] + seat_r;
+shaft_bot = gz - shaft_hole_d / 2;
+shaft_min_offset = drive_offset + seat_top + 0.6 - shaft_bot;   // drive_offset that leaves 0.6 mm
 
 // height of the solid at the pinion
 top_z   = is_side ? tower_h : H;
@@ -251,7 +276,7 @@ rk_zb   = extrusion_slot_depth(profile) - rack_floor_clear;   // local z of the 
 rk_top  = extrusion_cavity_w(profile) / 2 - rack_side_clear;   // half width of the base
 rk_bot  = rk_top - rack_chamfer;
 rk_base_top = rk_zb - extrusion_lip_t(profile);
-rk_zp   = rk_zb + pitch_line_offset;                            // local z of the pitch line
+rk_zp   = rk_zb + pitch_line_offset + drive_offset;             // local z of the pitch line
 rk_bar  = extrusion_slot_w(profile) - rack_bar_clear;
 rk_screws = setscrew_n < 1 ? [] : [for (i = [0:setscrew_n - 1])
     let(x = rk_L / 2 + (i - (setscrew_n - 1) / 2) * setscrew_pitch) round(x / rk_p) * rk_p];
@@ -272,28 +297,37 @@ if (!is_side) echo(str("Top mount: 4 x ", top_screw, " nuts on a ", top_grid, " 
 else echo(str("Side tower: ", 2 * tower_rows, " x ", tower_screw, " counterbored holes, ", tower_grid_y, " x ", tower_grid_z,
               " mm grid. Screw length = ", tower_t - tower_cbore_depth, " mm + the part you fix"));
 
+echo(str("Drive: shaft axis ", gz, " mm above the bottom face (drive_offset ", drive_offset, "), rack teeth ", rack_tip,
+         " mm above the profile top", rs_h > 0 ? str(", rack slot ", rs_h, " mm") : ""));
+if (shaft_bot < seat_top + 0.6)
+    echo(str("NOTE: the shaft hole ", shaft_bot < seat_top ? "opens into" : "leaves less than 0.6 mm to",
+             " the top tube seats. drive_offset >= ", ceil(shaft_min_offset * 20) / 20, " avoids it (the rack gets taller)"));
+
 assert(gz - b_od / 2 - bearing_fit / 2 >= ceil_z - 0.5 || b_in > -side_tube[0] + seat_r + 0.6,
        "The bearing pockets cut into the side tube seats: increase body_w or use a smaller bearing");
-assert(rack_slot_h > 0 || pitch_line_offset + gear_module + 0.15 <= ceiling_gap,
-       "The rack teeth touch the channel ceiling: increase ceiling_gap or enable rack_slot_h");
+assert(rs_h == 0 || rs_h >= rack_tip + 0.25, "rack_slot_h is lower than the rack teeth: increase it or set 0 (automatic)");
+assert(rk_zp - rk_base_top >= 1.25 * gear_module + 0.3, "drive_offset too low: the rack teeth would sink into the rack base");
+assert(!(pinion_bore == "d") || (pinion_d_flat < pinion_d_bore && pinion_d_flat > pinion_d_bore / 2),
+       "pinion_d_flat must be between half the bore and the bore diameter");
 assert(b_in > rack_slot_w / 2 + 1 && b_in > pinion_slot_w / 2 + 1, "No wall left between the bearing pockets and the pinion slot: increase body_w");
 assert(gz + b_od / 2 + 1 <= top_z, str("The bearing pocket breaks through the top: increase body_h (min ", gz + b_od / 2 + 1, ")"));
 assert(pk_top + 1 <= top_z, str("The pinion pocket breaks through the top: increase body_h (min ", pk_top + 1, ")"));
-assert(pk_z45 < pk_top - 0.5 && pk_z45 > gz, "Pinion pocket roof: increase pocket_top_clear or reduce roof_clear (or raise pocket_clear)");
+assert(is_gable || (pk_z45 < pk_top - 0.5 && pk_z45 > gz), "Pinion pocket roof: increase pocket_top_clear or reduce roof_clear (or raise pocket_clear)");
 assert(shaft_hole_d > b_id, "shaft_hole_d must be larger than the bearing bore");
 assert(rk_bot > 0, "rack_chamfer is larger than the rack base half width");
-assert(!is_side || (pinion_x - pk_r >= tw_x0 + 0.8 && pinion_x + pk_r <= tw_x1 - 0.8) || gz + pk_r < H,
-       "The pinion pocket comes out of the tower: move pinion_x or increase tower_t");
-assert(abs(pinion_x) + pk_r <= L / 2 + 1, "The pinion is outside the body: check pinion_x");
-assert(is_side || top_grid / 2 - tm_hole / 2 - (pk_r) >= 1 || H - top_hole_depth > pk_top,
+assert(pinion_x - ra - 0.5 >= pk_x0 && pinion_x + ra + 0.5 <= pk_x1,
+       "The pinion is too close to an end of the carriage: check pinion_x and body_len");
+assert(is_side || top_grid / 2 - tm_hole / 2 >= pinion_slot_w / 2 + 0.5 ||
+       top_grid / 2 - tm_hole / 2 - abs(pinion_x) >= pocket_half(H - top_hole_depth) + 0.5,
        "The top holes reach the pinion pocket: increase top_grid or reduce top_hole_depth");
 assert(is_side || H - top_nut_depth - tm_ac / 2 > gz + b_od / 2 + 0.6 || top_grid / 2 - tm_af / 2 > b_od / 2 + 0.6,
        "The top nuts touch the bearing pockets: increase body_h or top_nut_depth");
 assert(is_side || top_nut_depth - tm_t / 2 >= 1, "Less than 1 mm of plastic above the top nuts: increase top_nut_depth");
-assert(is_side || !tap_holes || ((top_grid / 2 - tap_d / 2 >= pk_r + 0.8 || tap_y - tap_d / 2 >= pinion_slot_w / 2 + 0.8 ||
-       H - top_hole_depth >= pk_top + 0.8) && top_grid / 2 - tap_y > (tm_hole + tap_d) / 2 + 0.8),
+assert(is_side || !tap_holes || ((top_grid / 2 - tap_d / 2 - abs(pinion_x) >= pocket_half(H - top_hole_depth) + 0.5 ||
+       tap_y - tap_d / 2 >= pinion_slot_w / 2 + 0.5) && top_grid / 2 - tap_y > (tm_hole + tap_d) / 2 + 0.8),
        "The tap holes collide with the pinion pocket or the top holes: adjust tap_y");
-assert(!is_side || tower_hole_z - tower_cbore_d / 2 >= pk_top + 1, "The tower holes cut into the pinion pocket: raise tower_hole_z");
+assert(!is_side || tower_grid_y / 2 - tower_cbore_d / 2 >= pinion_slot_w / 2 + 0.5 || tower_hole_z - tower_cbore_d / 2 >= pk_top + 1,
+       "The tower holes cut into the pinion pocket: raise tower_hole_z");
 assert(!is_side || tower_hole_z + (tower_rows - 1) * tower_grid_z + tower_cbore_d / 2 + 1 <= tower_h, "The tower holes do not fit: increase tower_h");
 assert(!is_side || tower_cbore_depth < tower_t - 2, "The counterbore goes through the tower: reduce tower_cbore_depth");
 assert(-v_tube[0] + seat_r < W / 2 - 1.5 && -side_tube[0] + seat_r < W / 2 - 1.5, "Side walls thinner than 1.5 mm: increase body_w");
@@ -321,7 +355,7 @@ module channel2d() {
             translate([-(h + wall_gap), -pz - 1]) square([2 * (h + wall_gap), pz + 1 + h + ceiling_gap]);
             for (m = [0, 1]) mirror([m, 0]) lip_left2d();
         }
-        if (rack_slot_h > 0) translate([-rack_slot_w / 2, 0]) square([rack_slot_w, h + rack_slot_h]);
+        if (rs_h > 0) translate([-rack_slot_w / 2, 0]) square([rack_slot_w, h + rs_h]);
         seats2d();
     }
 }
@@ -334,13 +368,18 @@ module body() {
     if (is_side) chamfered_box([tw_x0, -W / 2, 0], [tw_x1, W / 2, tower_h], edge_chamfer);
 }
 
-// Pinion pocket (XZ outline): straight sides down to the channel, 45 deg roof, flat top
+// Pinion pocket (XZ outline). gable: 45 deg sides from the channel to a flat top.
+// compact: vertical sides near the pinion, then the 45 deg roof and the flat top.
+// Clipped to keep pocket_end_wall at the carriage ends.
 module pinion_pocket2d() {
-    z45 = pk_z45;
-    half_top = max(0.5, pk_k - (pk_top - gz));
-    translate([pinion_x, 0]) polygon([
-        [-pk_r, ceil_z - eps], [pk_r, ceil_z - eps], [pk_r, z45],
-        [half_top, pk_top], [-half_top, pk_top], [-pk_r, z45]]);
+    z0 = ceil_z - eps;
+    pts = is_gable
+        ? [[-pocket_half(z0), z0], [pocket_half(z0), z0], [pk_half_top, pk_top], [-pk_half_top, pk_top]]
+        : [[-pk_r, z0], [pk_r, z0], [pk_r, pk_z45], [pk_half_top, pk_top], [-pk_half_top, pk_top], [-pk_r, pk_z45]];
+    intersection() {
+        translate([pinion_x, 0]) polygon(pts);
+        translate([pk_x0, z0 - 1]) square([pk_x1 - pk_x0, pk_top - z0 + 2]);
+    }
 }
 
 module top_mount_cuts() {
@@ -385,6 +424,14 @@ module carriage() {
 module pinion() {
     difference() {
         linear_extrude(pinion_w) spur_gear2d(gear_module, pinion_teeth, pressure_angle, pinion_backlash);
+        if (pinion_bore == "d") {
+            translate([0, 0, -1]) linear_extrude(pinion_w + 2) intersection() {
+                circle(d = pinion_d_bore, $fn = 48);
+                translate([-pinion_d_bore, -pinion_d_bore]) square([pinion_d_flat + pinion_d_bore / 2, 2 * pinion_d_bore]);
+            }
+            for (z = [0, pinion_w]) translate([0, 0, z]) mirror([0, 0, z > 0 ? 1 : 0])
+                translate([0, 0, -eps]) cylinder(d1 = pinion_d_bore + 0.6, d2 = pinion_d_bore - 0.2, h = 0.4 + eps, $fn = 48);
+        }
         if (pinion_bore == "tap") {
             translate([0, 0, -1]) cylinder(d = pinion_tap_d, h = pinion_w + 2, $fn = 32);
             for (z = [0, pinion_w]) translate([0, 0, z]) mirror([0, 0, z > 0 ? 1 : 0])
