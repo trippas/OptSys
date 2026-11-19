@@ -25,3 +25,26 @@ module mirror4() {
     for (mx = [0, 1], my = [0, 1])
         mirror([mx, 0, 0]) mirror([0, my, 0]) children();
 }
+
+// Box from p0 to p1 with all 12 edges chamfered at 45 deg (leg c). Convex.
+module chamfered_box(p0, p1, c) {
+    s = p1 - p0;
+    translate(p0) if (c <= 0) cube(s);
+    else hull() {
+        translate([0, c, c]) cube([s[0], s[1] - 2 * c, s[2] - 2 * c]);
+        translate([c, 0, c]) cube([s[0] - 2 * c, s[1], s[2] - 2 * c]);
+        translate([c, c, 0]) cube([s[0] - 2 * c, s[1] - 2 * c, s[2]]);
+    }
+}
+
+// Extrudes a 2D outline drawn in the YZ plane (2D x -> Y, 2D y -> Z)
+// along +X, from x0 to x1.
+module yz_extrude(x0, x1) {
+    translate([x0, 0, 0]) rotate([90, 0, 90]) linear_extrude(x1 - x0) children();
+}
+
+// Extrudes a 2D outline drawn in the XZ plane (2D x -> X, 2D y -> Z)
+// along Y, centered on y = 0, total width w.
+module xz_extrude(w) {
+    rotate([90, 0, 0]) linear_extrude(w, center = true) children();
+}
