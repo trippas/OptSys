@@ -2,6 +2,8 @@
 
 *Part of [OptSys](../../README.md).*
 
+![QM42 receptor (50 mm cage, V rod seats) with an L39 adapter above it and an M42 x 1 male adapter](../../docs/quick_mount.png)
+
 One small adapter per lens, one receptor per cage position. The adapter carries the lens (enlarger lens, microscope objective) or screws into a bellows / helicoid, and drops into a **QM receptor**: a cage plate with `lens_mount = "qm"` ([`parts/cage_plates`](../cage_plates/README.md)). Print the adapters small and fine (0.08 mm layers work well for the L39 thread).
 
 ## How the QM interface works
