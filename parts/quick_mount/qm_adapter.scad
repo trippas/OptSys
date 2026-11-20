@@ -120,8 +120,9 @@ module adapter() {
         if (female) {
             translate([0, 0, z_thr]) internal_thread_cutter(d, P, thread_l + 1, c, thread_n, thread_zres);
             // 45 deg transition from the bore to the thread (no flat overhang in either orientation)
+            // (runs 0.2 mm into the thread so it shares no face with the thread cutter)
             translate([0, 0, z_thr - (f_rmin - bore_d / 2)])
-                cylinder(r1 = bore_d / 2, r2 = f_rmin + eps, h = f_rmin - bore_d / 2 + eps);
+                cylinder(r1 = bore_d / 2, r2 = f_rmin + 0.2, h = f_rmin - bore_d / 2 + 0.2);
             // entry chamfer
             translate([0, 0, z_top - (f_rmaj + entry_chamfer - f_rmin)])
                 cylinder(r1 = f_rmin - eps, r2 = f_rmaj + entry_chamfer, h = f_rmaj + entry_chamfer - f_rmin + eps);
