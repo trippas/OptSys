@@ -8,8 +8,10 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 
 | Part | Folder | Standards | Description |
 |---|---|---|---|
-| Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | 60 mm, OptSys 100 | Lens mount with retaining-ring thread, magnetic bellows recess, compliant rod clamps, optional TPU hinges and post mount |
+| Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 100 | Lens mount with retaining-ring thread or QM quick-mount receptor, magnetic bellows recess, compliant rod clamps (round or V seats), optional TPU hinges and post mount |
+| QM lens adapter | [`parts/quick_mount`](parts/quick_mount/README.md) | QM42 | Quick-mount adapter for enlarger lenses (L39), objectives (RMS, M25, ...) or M42 / T2 bellows, locked in a QM receptor plate by one screw |
 | Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
+| Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads | Rod seat test (V seats vs round seat vs tight holes) and internal thread test rings (L39 enlarger, RMS, M25 objectives) |
 
 ## Interface standards
 
@@ -19,6 +21,7 @@ Defined once in [`lib/standards.scad`](lib/standards.scad) and used by every par
 |---|---|---|---|---|
 | `16mm` | 16 mm | Ø4 | SM05 (0.535"-40) | 25 mm |
 | `30mm` | 30 mm | Ø6 | SM1 (1.035"-40) | 41 mm |
+| `50mm` (OptSys) | 50 mm | Ø6 | QM42 quick mount | 63 mm |
 | `60mm` | 60 mm | Ø6 | SM2 (2.035"-40) | 71.1 mm |
 | `100mm` (OptSys) | 85 mm | Ø8 | M64×1.5 | 100 mm |
 
@@ -39,6 +42,8 @@ lib/                     shared code, no output of its own
   multimaterial.scad     dovetails for rigid + TPU parts
   gears.scad             involute spur gears and racks
   extrusions.scad        slotted profile outlines (ghost previews)
+  rod_seats.scad         V rod seats (no-play plate-to-rod contact)
+  quickmount.scad        QM quick mount: adapter spigot/flange, receptor cutter
 parts/<family>/          one folder per part family
   <part>.scad            the part, with Customizer parameters
   <part>.json            Customizer presets (same base name)

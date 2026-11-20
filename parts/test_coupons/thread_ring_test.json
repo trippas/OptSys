@@ -1,0 +1,14 @@
+{
+    "parameterSets": {
+        "L39 - enlarger lenses (39 mm x 26 TPI)": {
+            "thread": "L39"
+        },
+        "RMS - microscope objectives": {
+            "thread": "RMS"
+        },
+        "M25 x 0.75 - Leica / Nikon objectives": {
+            "thread": "M25x0.75"
+        }
+    },
+    "fileFormatVersion": "1"
+}

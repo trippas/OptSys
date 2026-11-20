@@ -1,0 +1,40 @@
+{
+    "parameterSets": {
+        "L39 enlarger lens (QM42)": {
+            "mode": "female",
+            "thread": "L39",
+            "thread_clearance": 0.15,
+            "thread_l": 5,
+            "hub_h": 0
+        },
+        "RMS objective (QM42)": {
+            "mode": "female",
+            "thread": "RMS",
+            "thread_clearance": 0.15,
+            "thread_l": 4,
+            "hub_h": 0
+        },
+        "M25 x 0.75 objective (QM42)": {
+            "mode": "female",
+            "thread": "M25x0.75",
+            "thread_clearance": 0.15,
+            "thread_l": 4,
+            "hub_h": 0
+        },
+        "M42 x 1 male - Pentax bellows / helicoid (QM42)": {
+            "mode": "male",
+            "thread": "M42x1",
+            "thread_clearance": 0.2,
+            "thread_l": 5,
+            "hub_h": 0
+        },
+        "T2 male - M42 x 0.75 (QM42)": {
+            "mode": "male",
+            "thread": "T2",
+            "thread_clearance": 0.2,
+            "thread_l": 5,
+            "hub_h": 0
+        }
+    },
+    "fileFormatVersion": "1"
+}
