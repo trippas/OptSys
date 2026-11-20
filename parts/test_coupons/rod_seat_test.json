@@ -1,0 +1,11 @@
+{
+    "parameterSets": {
+        "Ø6 rods (30 / 50 / 60 mm cages)": {
+            "standard": "60mm"
+        },
+        "Ø8 rods (OptSys 100)": {
+            "standard": "100mm"
+        }
+    },
+    "fileFormatVersion": "1"
+}

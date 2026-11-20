@@ -26,6 +26,19 @@ OPTSYS_THREADS = [
     ["SM2",    2.035 * 25.4, 25.4 / 40],
     ["SM30",   30.5,         0.5],
     ["C-mount", 1.0 * 25.4,  25.4 / 32],
+    // Lens threads. Enlarger lenses use the Leica thread mount: 39 mm x
+    // 26 TPI (sold as "M39x1"; true M39x1 differs by 0.023 mm per turn).
+    // OptSys prints them with its 60 deg profile plus clearance.
+    ["L39",      39,           25.4 / 26],
+    ["M39x1",    39,           1],
+    ["M42x1",    42,           1],
+    ["T2",       42,           0.75],
+    // Microscope objectives (RMS = 0.8"-36 Whitworth; M25 Leica/Nikon,
+    // M27 Zeiss, M26 x 36 TPI Mitutoyo).
+    ["RMS",      0.8 * 25.4,   25.4 / 36],
+    ["M25x0.75", 25,           0.75],
+    ["M27x0.75", 27,           0.75],
+    ["M26x36TPI", 26,          25.4 / 36],
 ];
 
 function _thread(name) = OPTSYS_THREADS[search([name], OPTSYS_THREADS)[0]];

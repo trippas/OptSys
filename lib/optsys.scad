@@ -10,3 +10,4 @@ include <threads.scad>
 include <multimaterial.scad>
 include <gears.scad>
 include <extrusions.scad>
+include <rod_seats.scad>

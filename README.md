@@ -10,6 +10,7 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 |---|---|---|---|
 | Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | 60 mm, OptSys 100 | Lens mount with retaining-ring thread, magnetic bellows recess, compliant rod clamps, optional TPU hinges and post mount |
 | Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
+| Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads | Rod seat test (V seats vs round seat vs tight holes) and internal thread test rings (L39 enlarger, RMS, M25 objectives) |
 
 ## Interface standards
 
@@ -39,6 +40,7 @@ lib/                     shared code, no output of its own
   multimaterial.scad     dovetails for rigid + TPU parts
   gears.scad             involute spur gears and racks
   extrusions.scad        slotted profile outlines (ghost previews)
+  rod_seats.scad         V rod seats (no-play plate-to-rod contact)
 parts/<family>/          one folder per part family
   <part>.scad            the part, with Customizer parameters
   <part>.json            Customizer presets (same base name)
