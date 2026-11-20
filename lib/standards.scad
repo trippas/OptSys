@@ -3,10 +3,13 @@
 // Cage systems: [name, rod spacing (center to center), rod diameter,
 //                series thread name, typical plate width]
 // The 16/30/60 mm entries follow the Thorlabs cage standards (rod spacing,
-// rod size and SM thread series); "100mm" is the OptSys own large format.
+// rod size and SM thread series); "50mm" and "100mm" are OptSys formats
+// ("50mm" comes from the user's epi-illuminator cage, with the QM42 quick
+// mount as its series interface).
 OPTSYS_CAGES = [
     ["16mm",  16, 4, "SM05", 25],
     ["30mm",  30, 6, "SM1",  41],
+    ["50mm",  50, 6, "QM42", 63],
     ["60mm",  60, 6, "SM2",  71.1],
     ["100mm", 85, 8, "M64x1.5", 100],
 ];
@@ -44,6 +47,34 @@ OPTSYS_THREADS = [
 function _thread(name) = OPTSYS_THREADS[search([name], OPTSYS_THREADS)[0]];
 function thread_spec_d(name) = _thread(name)[1];
 function thread_spec_pitch(name) = _thread(name)[2];
+
+// Quick mounts (QM): a flanged spigot on the lens adapter goes into a bore
+// in the receptor plate; a radial screw presses on a conical flank of a
+// groove in the spigot, which pulls the flange against the seat face
+// (axial position and tilt) and pushes the spigot against the bore wall
+// or two locating pins (centering). The groove runs all around, so the
+// adapter can be clocked freely. QM42 is measured on the user's tested
+// EPI quick-mount plate and M39 adapter.
+// [name, spigot d, spigot length, flange d, flange t, screw depth,
+//  groove top depth, cone top depth, cone bottom depth, groove depth, screw]
+// Depths are measured from the seat plane (flange underside) into the
+// receptor. Groove: flat step at "groove top", bottom (r - groove depth)
+// down to "cone top", conical flank back to r at "cone bottom".
+OPTSYS_QUICKMOUNTS = [
+    ["QM42", 42, 10, 50, 3, 5, 3.4, 5.2, 6.4, 1.7, "M4"],
+];
+
+function _qm(name) = OPTSYS_QUICKMOUNTS[search([str(name)], OPTSYS_QUICKMOUNTS)[0]];
+function qm_d(name)            = _qm(name)[1];
+function qm_l(name)            = _qm(name)[2];
+function qm_flange_d(name)     = _qm(name)[3];
+function qm_flange_t(name)     = _qm(name)[4];
+function qm_screw_depth(name)  = _qm(name)[5];
+function qm_groove_top(name)   = _qm(name)[6];
+function qm_cone_top(name)     = _qm(name)[7];
+function qm_cone_bottom(name)  = _qm(name)[8];
+function qm_groove_depth(name) = _qm(name)[9];
+function qm_screw(name)        = _qm(name)[10];
 
 // Optical posts (metric): diameter, top thread, bottom thread.
 OPTSYS_POST_D = 12.7;
