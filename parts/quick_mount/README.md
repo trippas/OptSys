@@ -10,7 +10,7 @@ One small adapter per lens, one receptor per cage position. The adapter carries 
 
 Taken from the user's tested quick mount (epi-illuminator cage, Pentax bellows):
 
-- The adapter has a **Ø42 spigot** and a **Ø50 × 3 flange**. The spigot goes into a Ø42 bore in the receptor; the flange underside rests on the receptor seat face.
+- The adapter has a **Ø42 spigot** and a **Ø46 × 3 flange** (Ø50 on QM42-EPI). The spigot goes into a Ø42 bore in the receptor; the flange underside rests on the receptor seat face.
 - Around the spigot runs a **groove** with a flat step on top and a **conical flank** below.
 - A radial **M4 lock screw** in the receptor (heat-set insert or captive nut) presses on the conical flank. Part of its force pulls the flange onto the seat face (about 1.4 × the screw force with the 55° flank): the seat face sets the axial position and the tilt. The rest pushes the spigot against the bore wall (or two locating pins): that sets the centering.
 - The groove runs all around, so the lens can be clocked freely (aperture scale where you want it).
