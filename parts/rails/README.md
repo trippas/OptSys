@@ -17,6 +17,8 @@ A carriage that slides on a 2020 V-slot extrusion on six Ø4 PTFE tubes and is d
   - `top` (XY): four M4 nuts under the top face on a 25 mm square, to stack another stage or fix a part, plus two Ø3.3 tap holes on the +Y half for self-tapping M4 screws.
   - `side` (Z): a tower with four counterbored M4 holes on a 25 × 18 mm grid.
 - **Stacking**: the Z tower bolts onto the top of an XY carriage. Its 25 × 18 grid matches the two -Y nut holes plus the two tap holes of the XY carriage (2 screws into nuts, 2 self-tapping).
+- **Drive height** (`drive_offset`): moves the shaft, bearings and pinion up or down; the rack teeth follow so the mesh is kept, and a slot for the rack opens through the carriage when the teeth reach the channel ceiling. At 0 the shaft hole just touches the top tube seats (as in the original design); the console reports the offset that leaves a wall between them (0.85 mm with the defaults). A carriage, its pinion and its racks must be generated with the same `drive_offset`.
+- **Pinion pocket**: `gable` (default) has 45° sides from the channel to a flat top, so the carriage prints standing on an end face without overhangs; `compact` keeps more material around the pinion for printing on the bottom face.
 - **Interference checks**: when a parameter change makes features collide, OpenSCAD stops with a message saying what to adjust.
 
 ## Usage
@@ -32,7 +34,7 @@ A carriage that slides on a 2020 V-slot extrusion on six Ø4 PTFE tubes and is d
 | Value | Output | Print orientation |
 |---|---|---|
 | `assembly` | Preview with ghost profile, tubes, bearings, shaft and knob | – |
-| `carriage` | Carriage | As generated: bottom face on the bed |
+| `carriage` | Carriage | Standing on an end face (rail axis vertical): tube seats and channel print without overhangs. Z carriage: on the back face of the tower |
 | `pinion` | Pinion | Flat |
 | `knob` | Knob | Nut pocket on the bed |
 | `rack` | Rack (length `rack_len`) | Teeth up |
@@ -52,7 +54,7 @@ The rail (extrusion) axis is X, the carriage is centered on x = 0 with its botto
 | M4 socket head screws, side tower (length printed in the console): 2 into the XY nuts, 2 self-tapping into the tap holes | 4 |
 | M3 set screws per rack | 3 |
 
-With `pinion_bore = tap` the pinion has a 3.3 mm tap drill hole, to thread it onto the M4 rod; `hex` gives a clearance hole with a captive M4 nut instead, and `solid` leaves it without a hole.
+The pinion has a D bore by default (`pinion_d_bore` 4.1, `pinion_d_flat` 3.6 across the flat) so it cannot slip on a shaft with a flat. Other options: `tap` (3.3 mm tap drill to thread it onto an M4 rod), `hex` (clearance hole and captive M4 nut) and `solid`.
 
 ## Files
 
