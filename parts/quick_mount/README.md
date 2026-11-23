@@ -2,7 +2,7 @@
 
 *Part of [OptSys](../../README.md).*
 
-![QM42 receptor (50 mm cage, V rod seats) with an L39 adapter above it and an M42 x 1 male adapter](../../docs/quick_mount.png)
+![QM42-EPI receptor (50 mm cage, V rod seats) with an L39 adapter above it and an M42 x 1 male adapter](../../docs/quick_mount.png)
 
 One small adapter per lens, one receptor per cage position. The adapter carries the lens (enlarger lens, microscope objective) or screws into a bellows / helicoid, and drops into a **QM receptor**: a cage plate with `lens_mount = "qm"` ([`parts/cage_plates`](../cage_plates/README.md)). Print the adapters small and fine (0.08 mm layers work well for the L39 thread).
 
@@ -17,12 +17,15 @@ Taken from the user's tested quick mount (epi-illuminator cage, Pentax bellows):
 
 All dimensions live in `OPTSYS_QUICKMOUNTS` (`lib/standards.scad`); the geometry in `lib/quickmount.scad` (`qm_spigot_flange`, `qm_receptor_cut`).
 
-| QM42 | Value |
-|---|---|
-| Spigot | Ø42 × 10 mm (= receptor thickness) |
-| Flange | Ø50 × 3 mm |
-| Lock screw | M4, 5 mm below the seat face |
-| Groove | flat step 3.4 mm below the seat, bottom Ø38.6, conical flank from 5.2 to 6.4 mm |
+Two interfaces with the same groove profile, **not interchangeable**:
+
+| | `QM42` (OptSys) | `QM42-EPI` (tested EPI plates) |
+|---|---|---|
+| Receptor | 10 mm plate with 1.5 mm bellows recesses on both faces: flange on the front recess floor, spigot fills the 7 mm web | 10 mm plate without recesses |
+| Spigot | Ø42 × 7 mm | Ø42 × 10 mm |
+| Flange | Ø50 × 3 mm | Ø50 × 3 mm |
+| Lock screw | M4, 3.5 mm below the seat face (plate center) | M4, 5 mm below the seat face (plate center) |
+| Groove | flat step 1.9 mm below the seat, bottom Ø38.6, conical flank from 3.7 to 4.9 mm | step 3.4, flank from 5.2 to 6.4 mm |
 
 ## Adapter (`qm_adapter.scad`)
 
@@ -45,13 +48,13 @@ Parameters:
 
 Use `parts/cage_plates/lens_cage_plate.scad` with one of the QM presets:
 
-- `50 mm QM42 receptor, V rod seats (EPI style)`
-- `60 mm QM42 receptor, V rod seats` (no front bellows recess: the flange does not fit in the 60 mm recess)
+- `50 mm QM42-EPI receptor, V rod seats (EPI style, no recess)` (the Ø50.6 flange pocket would leave too thin a wall next to the clamp nuts on the 63 mm plate)
+- `60 mm QM42 receptor, V rod seats` (no front bellows recess, the flange does not fit in the 60 mm recess: it sits in a Ø50.6 × 1.5 pocket instead)
 - `100 mm QM42 receptor, V rod seats` (flange seats on the front recess floor)
 
 Receptor options (section *Lens mount*): `qm_screw_side`, `qm_fixing` (`insert` Ø5.4 hole, or captive `nut` dropped in from the seat face, outside the flange), `qm_locate` (`bore`: tight Ø42.04 bore as tested; `pins`: two Ø3 dowel pins opposite the screw at ±50° and a Ø42.3 bore, so the centering no longer depends on how the bore prints). The console prints the lock screw length (M4 setscrew).
 
 ## Hardware
 
-- Receptor: one M4 heat-set insert (or M4 nut) and one M4 setscrew (length printed in the console: M4 × 14 on the 50 mm plate). Optional: two Ø3 × 10 dowel pins.
+- Receptor: one M4 heat-set insert (or M4 nut) and one M4 setscrew (length printed in the console: M4 × 14 on the 50 mm plate, M4 × 20 on the 60 mm). Optional: two Ø3 × 10 dowel pins.
 - Adapter: none.

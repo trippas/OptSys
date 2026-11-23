@@ -22,7 +22,6 @@
             "recess_front": "true",
             "recess_back": "true",
             "lens_mount": "thread",
-            "rod_seat": "round",
             "tpu_block_h_set": 0
         },
         "60 mm standard (Ø6 rods at 60 mm)": {
@@ -47,7 +46,6 @@
             "recess_front": "true",
             "recess_back": "true",
             "lens_mount": "thread",
-            "rod_seat": "round",
             "tpu_block_h_set": 0
         },
         "60 mm standard, no recess (2 in lens)": {
@@ -72,7 +70,6 @@
             "recess_front": "false",
             "recess_back": "false",
             "lens_mount": "thread",
-            "rod_seat": "round",
             "tpu_block_h_set": 0
         },
         "50 mm standard (Ø6 rods at 50 mm, 1 in lens)": {
@@ -96,11 +93,10 @@
             "ring_id_set": 0,
             "tpu_block_h_set": 3,
             "lens_mount": "thread",
-            "rod_seat": "round",
             "recess_front": "true",
             "recess_back": "true"
         },
-        "50 mm QM42 receptor, V rod seats (EPI style)": {
+        "50 mm QM42-EPI receptor, V rod seats (EPI style, no recess)": {
             "standard": "50mm",
             "rod_d_set": 6,
             "rod_c_set": 25,
@@ -121,12 +117,11 @@
             "ring_id_set": 0,
             "tpu_block_h_set": 3,
             "lens_mount": "qm",
-            "qm": "QM42",
+            "qm": "QM42-EPI",
             "qm_screw_side": "top",
             "qm_fixing": "insert",
             "qm_locate": "bore",
             "qm_bore_clearance_set": 0,
-            "rod_seat": "v",
             "rod_v_angle": 120,
             "recess_front": "false",
             "recess_back": "false"
@@ -153,7 +148,6 @@
             "recess_front": "false",
             "recess_back": "true",
             "lens_mount": "qm",
-            "rod_seat": "v",
             "tpu_block_h_set": 0,
             "qm": "QM42",
             "qm_screw_side": "top",
@@ -184,7 +178,6 @@
             "recess_front": "true",
             "recess_back": "true",
             "lens_mount": "qm",
-            "rod_seat": "v",
             "tpu_block_h_set": 0,
             "qm": "QM42",
             "qm_screw_side": "top",

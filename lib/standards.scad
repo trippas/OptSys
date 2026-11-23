@@ -4,12 +4,12 @@
 //                series thread name, typical plate width]
 // The 16/30/60 mm entries follow the Thorlabs cage standards (rod spacing,
 // rod size and SM thread series); "50mm" and "100mm" are OptSys formats
-// ("50mm" comes from the user's epi-illuminator cage, with the QM42 quick
+// ("50mm" comes from the user's epi-illuminator cage, with the QM42-EPI quick
 // mount as its series interface).
 OPTSYS_CAGES = [
     ["16mm",  16, 4, "SM05", 25],
     ["30mm",  30, 6, "SM1",  41],
-    ["50mm",  50, 6, "QM42", 63],
+    ["50mm",  50, 6, "QM42-EPI", 63],
     ["60mm",  60, 6, "SM2",  71.1],
     ["100mm", 85, 8, "M64x1.5", 100],
 ];
@@ -53,15 +53,22 @@ function thread_spec_pitch(name) = _thread(name)[2];
 // groove in the spigot, which pulls the flange against the seat face
 // (axial position and tilt) and pushes the spigot against the bore wall
 // or two locating pins (centering). The groove runs all around, so the
-// adapter can be clocked freely. QM42 is measured on the user's tested
-// EPI quick-mount plate and M39 adapter.
+// adapter can be clocked freely.
+//   QM42      OptSys: 7 mm spigot and screw 3.5 mm below the seat face, so
+//             in a 10 mm plate with 1.5 mm bellows recesses on both faces
+//             the flange sits on the front recess floor, the spigot fills
+//             the web between both floors and the screw is centered.
+//   QM42-EPI  the user's tested EPI quick-mount plate and M39 adapter
+//             (10 mm plate without recesses, screw at mid thickness).
+//             Same groove, 1.5 mm deeper; not interchangeable with QM42.
 // [name, spigot d, spigot length, flange d, flange t, screw depth,
 //  groove top depth, cone top depth, cone bottom depth, groove depth, screw]
 // Depths are measured from the seat plane (flange underside) into the
 // receptor. Groove: flat step at "groove top", bottom (r - groove depth)
 // down to "cone top", conical flank back to r at "cone bottom".
 OPTSYS_QUICKMOUNTS = [
-    ["QM42", 42, 10, 50, 3, 5, 3.4, 5.2, 6.4, 1.7, "M4"],
+    ["QM42",     42,  7, 50, 3, 3.5, 1.9, 3.7, 4.9, 1.7, "M4"],
+    ["QM42-EPI", 42, 10, 50, 3, 5,   3.4, 5.2, 6.4, 1.7, "M4"],
 ];
 
 function _qm(name) = OPTSYS_QUICKMOUNTS[search([str(name)], OPTSYS_QUICKMOUNTS)[0]];

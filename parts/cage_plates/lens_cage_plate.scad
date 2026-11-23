@@ -4,7 +4,7 @@
 //  Parametric cage plate - lens mount with a thread for a retaining
 //  ring (or a QM quick-mount receptor for lens adapters), recess for a
 //  magnetic bellows (both faces) and compliant clamps for 4 steel rods
-//  (round or V rod seats).
+//  (V rod seats).
 //
 //  Works in OpenSCAD 2021.01+, but use a recent development snapshot
 //  with the Manifold backend: rendering is MUCH faster.
@@ -45,12 +45,11 @@ edge_chamfer = 0.5; // [0:0.1:3]
 arm_wall = 3.375; // [1:0.025:10]
 // Rod diameter (0 = from standard)
 rod_d_set = 0; // [0:0.05:30]
-// Diametral clearance of the rod seat
+// Diametral clearance of the arm side of the rod seat (the body side is a V)
 rod_clearance = 0.25; // [0:0.05:2]
 // Distance from plate center to each rod axis (rod spacing = 2x) (0 = from standard)
 rod_c_set = 0; // [0:0.05:200]
-// Body side of the rod seat: round (with rod_clearance), or V: the arm pushes the rod into a V and it touches two lines along the whole thickness, without play (the plate cannot tilt on the rod)
-rod_seat = "round"; // [round:Round, v:V (no play)]
+// Rod seat: the arm pushes the rod into a V on the body side, so it touches two lines along the whole thickness, without play (the plate cannot tilt on the rod).
 // Included angle of the V seat (smaller = stiffer centering, but the arm must open more to snap the rod in)
 rod_v_angle = 120; // [60:1:150]
 // The body face continues this far past the upper V contact before the rod opening
@@ -145,7 +144,10 @@ magnet_depth = 3; // [0.5:0.1:10]
 // thread: lens + retaining ring (section below). qm: quick-mount receptor for lens adapters (parts/quick_mount)
 lens_mount = "thread"; // [thread:Lens + retaining ring thread, qm:QM quick-mount receptor]
 // Quick-mount interface (lib/standards.scad)
-qm = "QM42"; // [QM42:QM42 - Ø42 spigot, Ø50 flange]
+qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø50 flange (OptSys 10 mm plates with 1.5 mm recesses), QM42-EPI:QM42-EPI - Ø42 x 10 spigot (EPI plates without recess)]
+// The seat face (flange underside) is placed so the lock screw is centered in the plate thickness: on the front recess floor if there is one, otherwise in a round flange pocket (needs plate_t = 10 for QM42 with 1.5 mm recesses)
+// Diametral clearance of the flange pocket (only when the seat is below a face without recess)
+qm_pocket_clearance = 0.6; // [0:0.05:2]
 // Side of the QM lock screw (must differ from the post mount side)
 qm_screw_side = "top"; // [top:+Y side (top), bottom:-Y side (bottom), left:-X side (left), right:+X side (right)]
 // Lock screw fixing: heat-set insert at the edge, or captive nut dropped in from the seat face
@@ -178,8 +180,10 @@ thread_margin = 2; // [0.5:0.1:10]
 // Manual nominal thread diameter (0 = automatic: lens_d=60 -> M64)
 thread_d_set = 0; // [0:0.5:250]
 thread_pitch = 1.5; // [0.25:0.05:4]
-// Diametral thread clearance
+// Diametral thread clearance (radial play, split between plate and ring)
 thread_clearance = 0.2; // [0:0.05:1]
+// Axial thread clearance: extra play along Z between plate and ring flanks (split between both), without loosening the radial engagement. Printed flat, the flanks are 30 deg from the bed: layer steps and sag land there. Max = pitch / 2
+thread_z_clearance = 0.25; // [0:0.05:2]
 
 /* [TPU interfaces] */
 // Hinge neck thickness when printed in TPU (TPU is ~50x softer)
@@ -205,6 +209,8 @@ ring_overlap = 2; // [0:0.1:10]
 ring_id_set = 0; // [0:0.05:200]
 ring_slot_w = 3; // [0:0.1:15]
 ring_slot_d = 1.5; // [0:0.1:10]
+// 45 deg chamfer on both ends of the ring thread (removes the elephant foot and the thin start of the thread)
+ring_chamfer = 0.5; // [0:0.1:1.5]
 
 /* [Quality] */
 $fn = 96;
@@ -275,26 +281,36 @@ thread_len = z_ft - z_ct;
 qm_on    = lens_mount == "qm";
 qm_bc    = qm_bore_clearance_set > 0 ? qm_bore_clearance_set : qm_locate == "pins" ? 0.3 : 0.04;
 qm_angle = qm_screw_side == "right" ? 0 : qm_screw_side == "top" ? 90 : qm_screw_side == "left" ? 180 : 270;
-qm_zs    = z_ft - qm_screw_depth(qm);
+qm_seat_z = min(z_ft, plate_t / 2 + qm_screw_depth(qm));   // lock screw centered in the thickness when possible
+qm_zs    = qm_seat_z - qm_screw_depth(qm);
+qm_pocket = qm_on && qm_seat_z < z_ft - 1e-6;   // the flange sits in its own round pocket
+qm_pocket_r = (qm_flange_d(qm) + qm_pocket_clearance) / 2;
 // radius of the central feature (thread or QM bore), for the interference checks
 center_r = qm_on ? qm_d(qm) / 2 + qm_bc / 2 : (thread_d + thread_clearance) / 2;
-// rod seat
-v_seat   = rod_seat == "v";
-open_x0  = v_seat ? rod_c - rod_d / 2 * sin(rod_v_angle / 2) + rod_v_margin : rod_c - seat_r;   // left edge of the rod opening
+// rod seat (V)
+open_x0  = rod_c - rod_d / 2 * sin(rod_v_angle / 2) + rod_v_margin;   // left edge of the rod opening
 
 screw_len = (plate_w / 2 - head_depth) - (nut_x - nut_t / 2) + 1.5;
 echo(str("Recommended clamp screw: M3 x ", ceil(screw_len / 2) * 2, " (minimum length ", screw_len, " mm)"));
-if (!qm_on) echo(str("Lens Ø", lens_d, " -> aperture Ø", aperture_d, ", thread M", thread_d, "x", thread_pitch, " (usable length ", thread_len, " mm), ring ID Ø", ring_id));
-if (qm_on) echo(str("QM receptor ", qm, ": bore Ø", 2 * center_r, " (", qm_locate == "pins" ? str("2 dowel pins Ø", qm_pin_d, " x ", plate_t, " mm") : "tight bore", "), seat face at z = ", z_ft,
+if (!qm_on) echo(str("Lens Ø", lens_d, " -> aperture Ø", aperture_d, ", thread M", thread_d, "x", thread_pitch, " (usable length ", thread_len, " mm), ring ID Ø", ring_id,
+                     ". Ring play: radial ", thread_clearance, " mm, axial ", round(100 * (thread_z_clearance + 2 * thread_clearance * tan(30))) / 100, " mm"));
+if (qm_on) echo(str("QM receptor ", qm, ": bore Ø", 2 * center_r, " (", qm_locate == "pins" ? str("2 dowel pins Ø", qm_pin_d, " x ", plate_t, " mm") : "tight bore", "), seat face at z = ", qm_seat_z,
                     ", lock screw ", qm_screw(qm), " x ", ceil(qm_screw_len(qm, plate_w / 2) / 2) * 2, " setscrew on the ", qm_screw_side, " side (",
-                    qm_fixing == "insert" ? str("heat-set insert, hole Ø", qm_insert_d) : str(qm_screw(qm), " nut from the front face"), ")"));
-if (v_seat) echo(str("V rod seats ", rod_v_angle, " deg: the rod snaps past the arm tip with ~", rod_d - (rod_c + seat_r * cos(tip_ang) - open_x0), " mm interference (loosen the clamp screw to fit it)"));
+                    qm_fixing == "insert" ? str("heat-set insert, hole Ø", qm_insert_d) : str(qm_screw(qm), " nut from the front face"), ")",
+                    qm_pocket ? str(", flange pocket Ø", 2 * qm_pocket_r, " x ", plate_t - qm_seat_z, " mm") : "",
+                    ", spigot ", qm_seat_z - qm_l(qm) >= z_fb - 1e-6 ? str("ends ", qm_seat_z - qm_l(qm) - z_fb, " mm above the back floor") : str("sticks out ", z_fb - (qm_seat_z - qm_l(qm)), " mm past the back floor")));
+if (qm_on && abs(qm_zs - plate_t / 2) > 0.01)
+    echo(str("Note: the ", qm, " lock screw is ", plate_t / 2 - qm_zs, " mm off the plate center (seat face on the front recess floor at z = ", z_ft,
+             "). Centered with ", qm == "QM42-EPI" ? "plate_t = 10 and no front recess" : str("plate_t = ", 2 * (qm_screw_depth(qm) + recess_depth), " (1.5 mm recesses)")));
+echo(str("V rod seats ", rod_v_angle, " deg: the rod snaps past the arm tip with ~", rod_d - (rod_c + seat_r * cos(tip_ang) - open_x0), " mm interference (loosen the clamp screw to fit it)"));
 magnet_clear = magnet_offset * sqrt(2) - magnet_d / 2 - center_r;
 assert(aperture_d < lens_d, "The aperture must be smaller than the lens");
 assert(qm_on || thread_D1 > lens_d + 0.5, str("The lens does not fit through the thread: the minor diameter (", thread_D1, ") must exceed lens_d + 0.5. Increase thread_margin or thread_d_set"));
 assert(!magnets_on || magnet_clear >= 1, str("Thread M", thread_d, " cuts into the magnet holes (wall ", magnet_clear, " mm). Max lens with these magnets ~", floor(2 * (magnet_offset * sqrt(2) - magnet_d / 2 - 1) - thread_clearance) - 2 * thread_margin, " mm: move magnet_offset or use a smaller lens"));
 assert(qm_on || !thread_enable || ring_h <= thread_len, str("The ring (", ring_h, " mm) is taller than the thread (", thread_len, " mm)"));
 assert(qm_on || ring_id < lens_d - 0.5, "The ring does not overlap the lens: increase ring_overlap");
+assert(qm_on || thread_z_clearance <= thread_pitch / 2 + 1e-9, str("thread_z_clearance is larger than half the pitch (", thread_pitch / 2, ")"));
+assert(qm_on || 2 * ring_chamfer < ring_h, "ring_chamfer is too large for ring_h");
 echo(str("Rod spacing: ", 2 * rod_c, " mm"));
 assert(qm_on || thread_len > thread_pitch, "No height left for the thread: check plate_t / recess_depth / lip_h");
 // --- post mount ---
@@ -330,7 +346,7 @@ assert(hinge_y + hinge_reach + 1 <= screw_y - screw_hole / 2, "The hinge is too 
 assert(!any_recess || lobe_reach + recess_draft + 1.5 <= plate_w / 2, "The notches come too close to the edge: reduce lobe_reach");
 assert(notch_cx + notch_w / 2 < plate_w / 2, "The hinge does not fit: reduce tpu_hinge_w / hinge_w");
 // V rod seat
-assert(!v_seat || rod_d / 2 * sin(rod_v_angle / 2) >= slot_w / 2 + seat_fillet + 0.2, str("The lower V contact falls on the clamp slot: use a larger rod_v_angle (min ~", ceil(2 * asin(min(1, (slot_w / 2 + seat_fillet + 0.2) / (rod_d / 2)))), " deg) or a smaller slot_w"));
+assert(rod_d / 2 * sin(rod_v_angle / 2) >= slot_w / 2 + seat_fillet + 0.2, str("The lower V contact falls on the clamp slot: use a larger rod_v_angle (min ~", ceil(2 * asin(min(1, (slot_w / 2 + seat_fillet + 0.2) / (rod_d / 2)))), " deg) or a smaller slot_w"));
 // quick-mount receptor
 assert(!qm_on || part != "ring", "There is no retaining ring in QM mode: the lens goes in a QM adapter (parts/quick_mount)");
 assert(!qm_on || !recess_front || qm_flange_d(qm) <= recess_sq - 1, str("The ", qm, " flange (Ø", qm_flange_d(qm), ") does not fit on the front recess floor (", recess_sq, "): disable recess_front or enlarge recess_sq"));
@@ -339,6 +355,13 @@ assert(!qm_on || qm_fixing != "insert" || qm_zs - qm_insert_d / 2 >= 0.6 - 1e-6,
 assert(!qm_on || qm_fixing != "nut" || qm_zs - nut_ac(nut_af(qm_screw(qm))) / 2 - 0.1 >= 0.6, "The plate is too thin below the seat face for the QM nut: increase plate_t or use the insert");
 assert(!qm_on || qm_fixing != "nut" || qm_nut_r(qm) + (nut_t(qm_screw(qm)) + 0.2) / 2 + 1.2 <= plate_w / 2, "No room for the QM nut between the flange and the edge: use the insert");
 assert(!qm_on || qm_fixing != "insert" || qm_insert_l <= plate_w / 2 - center_r - 1, "qm_insert_l is longer than the wall between the bore and the edge");
+assert(!qm_on || qm_zs + clearance_d(qm_screw(qm)) / 2 <= z_ft - 0.6 && qm_zs - clearance_d(qm_screw(qm)) / 2 >= z_fb + 0.6 - 1e-6,
+       "The QM lock screw hole breaks into a bellows recess: use plate_t = 10 with 1.5 mm recesses (QM42) or no recesses and plate_t = 10 (QM42-EPI)");
+// flange pocket (front face without recess): walls to the clamp features that reach the front face
+qm_pocket_clear = min(norm([nut_in_x, nut_in_y]), norm([rod_c - slot_w / 2, hinge_y - slot_w / 2]), norm([rod_c, hinge_y - hinge_reach - dovetail_h]),
+                      post_on ? post_slot_in : 1e9) - qm_pocket_r;
+assert(!qm_pocket || qm_pocket_clear >= 1, str("The ", qm, " flange pocket (Ø", 2 * qm_pocket_r, ") is too close to the clamp nuts / slots (wall ", qm_pocket_clear,
+       " mm): this plate is too small for a recessed flange, use qm = QM42-EPI with plate_t = 10 and no front recess"));
 assert(!qm_on || !magnets_on || !recess_front || magnet_offset * sqrt(2) - magnet_d / 2 >= qm_flange_d(qm) / 2 + 0.5, "The magnets fall under the QM flange: move magnet_offset");
 
 // ---------------------------------------------------------------------
@@ -356,14 +379,13 @@ module corner_void2d() {
         union() {
             // rod seat + slot, filleted where they meet
             closing2d(seat_fillet) union() {
-                if (v_seat) translate([rod_c, rod_c]) {
+                translate([rod_c, rod_c]) {
                     // body side: V with its bisector along -X (the arm pushes the rod
                     // toward the body), limited to 1 mm around the rod
                     intersection() { rotate(-90) rod_seat_v2d(rod_d, rod_v_angle, 0.01); circle(rod_d / 2 + 1); }
                     // arm side: round seat
                     intersection() { circle(seat_r); translate([0, -seat_r - 1]) square(2 * seat_r + 2); }
                 }
-                else translate([rod_c, rod_c]) circle(seat_r);
                 translate([rod_c - slot_w / 2, hinge_y]) square([slot_w, rod_c - hinge_y]);
                 translate([rod_c, hinge_y]) circle(slot_w / 2);
             }
@@ -474,8 +496,15 @@ module central_cuts() {
     if (recess_front) render(convexity = 4) recess_top_cut();
     if (recess_back) translate([0, 0, plate_t / 2]) mirror([0, 0, 1]) translate([0, 0, -plate_t / 2]) render(convexity = 4) recess_top_cut();
     if (qm_on)
-        qm_receptor_cut(qm, z_ft, plate_w / 2, qm_angle, qm_bc, qm_fixing, qm_insert_d, qm_insert_l, 0.2,
-                        qm_locate, qm_pin_d, qm_pin_hole_d, qm_pin_a, 0.4, -1);
+    {
+        qm_receptor_cut(qm, qm_seat_z, plate_w / 2, qm_angle, qm_bc, qm_fixing, qm_insert_d, qm_insert_l, 0.2,
+                        qm_locate, qm_pin_d, qm_pin_hole_d, qm_pin_a, 0.4, -1, nut_top = plate_t);
+        // round pocket for the flange, so the seat face (and the screw) can sit below a face without recess
+        if (qm_pocket) {
+            translate([0, 0, qm_seat_z]) cylinder(r = qm_pocket_r, h = plate_t - qm_seat_z + 1);
+            translate([0, 0, plate_t - 0.4]) cylinder(r1 = qm_pocket_r, r2 = qm_pocket_r + 0.4 + 2 * eps, h = 0.4 + eps);
+        }
+    }
     else lens_cuts();
 
     // magnets
@@ -494,9 +523,9 @@ module lens_cuts() {
     translate([0, 0, z_fb + lip_h]) cylinder(d1 = aperture_d, d2 = lens_d, h = (lens_d - aperture_d) / 2 + eps);
     // thread
     if (thread_enable) {
-        translate([0, 0, z_ct]) internal_thread_cutter(thread_d, thread_pitch, thread_len + 0.5, thread_clearance, thread_fn, thread_zres);
-        // without a front recess the thread exits on the face: entry chamfer
-        if (!recess_front) translate([0, 0, plate_t - 0.6]) cylinder(d1 = thread_d + thread_clearance, d2 = thread_d + thread_clearance + 1.2 + 2 * eps, h = 0.6 + eps);
+        translate([0, 0, z_ct]) internal_thread_cutter(thread_d, thread_pitch, thread_len + 0.5, thread_clearance, thread_fn, thread_zres, thread_z_clearance / 2);
+        // entry chamfer where the thread exits (front face or front recess floor)
+        translate([0, 0, z_ft - 0.6]) cylinder(d1 = thread_d + thread_clearance, d2 = thread_d + thread_clearance + 1.2 + 2 * eps, h = 0.6 + eps);
     } else {
         translate([0, 0, z_ct - eps]) cylinder(d = lens_d + 0.4, h = plate_t);
     }
@@ -561,8 +590,16 @@ module tpu_part() {
 // ---------------------------------------------------------------------
 module retaining_ring() {
     difference() {
-        external_thread(thread_d, thread_pitch, ring_h, thread_clearance, thread_fn, thread_zres);
+        external_thread(thread_d, thread_pitch, ring_h, thread_clearance, thread_fn, thread_zres, thread_z_clearance / 2);
         translate([0, 0, -1]) cylinder(d = ring_id, h = ring_h + 2);
+        // 45 deg chamfers on both ends of the thread
+        if (ring_chamfer > 0) for (top = [0, 1]) translate([0, 0, top * ring_h]) mirror([0, 0, top]) {
+            ro = (thread_d - thread_clearance) / 2;
+            difference() {
+                translate([0, 0, -1]) cylinder(r = ro + 1, h = ring_chamfer + 1);
+                translate([0, 0, -eps]) cylinder(r1 = ro - ring_chamfer, r2 = ro + eps, h = ring_chamfer + 2 * eps);
+            }
+        }
         for (a = [0, 180]) rotate(a) translate([ring_id / 2 - 1, -ring_slot_w / 2, ring_h - ring_slot_d]) cube([(thread_d - ring_id) / 2, ring_slot_w, ring_slot_d + 1]);
     }
 }
@@ -578,5 +615,5 @@ else union() {
     color("SteelBlue") rigid_part();
     color("OrangeRed") render(convexity = 4) tpu_part();   // render(): keeps the preview from painting the whole plate orange
     if (show_rods) for (sx = [-1, 1], sy = [-1, 1]) %translate([sx * rod_c, sy * rod_c, -20]) cylinder(d = rod_d, h = plate_t + 40);
-    if (show_rods && qm_on) %translate([0, 0, z_ft]) qm_spigot_flange(qm);
+    if (show_rods && qm_on) %translate([0, 0, qm_seat_z]) qm_spigot_flange(qm);
 }

@@ -7,7 +7,8 @@
 //  position: print the adapters small and fine (e.g. 0.08 mm layers).
 //
 //  The interface (spigot, groove, flange) comes from OPTSYS_QUICKMOUNTS
-//  in lib/standards.scad; QM42 is the user's tested EPI quick mount.
+//  in lib/standards.scad: QM42 for OptSys plates (10 mm with 1.5 mm
+//  bellows recesses), QM42-EPI for the user's tested EPI plates.
 //    female - the lens screws into the adapter (enlarger lenses: L39;
 //             objectives: RMS, M25, ...). The lens flange or objective
 //             shoulder rests on the top face.
@@ -23,7 +24,7 @@ use <../../lib/optsys.scad>
 
 /* [Interface] */
 // Quick-mount interface
-qm = "QM42"; // [QM42:QM42 - Ø42 spigot, Ø50 flange]
+qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø50 flange (OptSys plates), QM42-EPI:QM42-EPI - Ø42 x 10 spigot (EPI plates)]
 
 /* [Lens thread] */
 // female: lens screws in; male: the adapter screws into a bellows / helicoid

@@ -44,13 +44,14 @@ function qm_nut_r(name, nut_clearance = 0.2) =
 // and whose edge, in the screw direction, is at edge_d from the axis.
 //   screw_a  direction of the lock screw in XY (deg, 90 = +Y)
 //   fixing   "insert" (heat-set insert at the edge) or "nut" (captive
-//            nut dropped in from the seat face, outside the flange)
+//            nut dropped in from the seat face, outside the flange; its
+//            slot is open up to nut_top, default the seat face)
 //   locate   "bore" (tight bore) or "pins" (two dowel pins opposite the
 //            screw, at +-pin_a, tangent to the nominal spigot)
 module qm_receptor_cut(name, seat_z, edge_d, screw_a = 90, bore_clearance = 0.04,
                        fixing = "insert", insert_d = 5.4, insert_l = 8, nut_clearance = 0.2,
                        locate = "bore", pin_d = 3, pin_hole_d = 3, pin_a = 50,
-                       entry_chamfer = 0.4, z_bottom = -1) {
+                       entry_chamfer = 0.4, z_bottom = -1, nut_top = undef) {
     R  = qm_d(name) / 2;
     rb = R + bore_clearance / 2;
     zs = seat_z - qm_screw_depth(name);
@@ -64,7 +65,7 @@ module qm_receptor_cut(name, seat_z, edge_d, screw_a = 90, bore_clearance = 0.04
         if (fixing == "insert")
             translate([0, edge_d - insert_l, zs]) rotate([-90, 0, 0]) cylinder(d = insert_d, h = insert_l + 1, $fn = 48);
         else
-            captive_nut_slot_y([0, qm_nut_r(name, nut_clearance), zs], nut_af(s), nut_t(s), seat_z, nut_clearance);
+            captive_nut_slot_y([0, qm_nut_r(name, nut_clearance), zs], nut_af(s), nut_t(s), is_undef(nut_top) ? seat_z : nut_top, nut_clearance);
     }
     if (locate == "pins")
         for (k = [-1, 1]) rotate(screw_a + 180 + k * pin_a)
