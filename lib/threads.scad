@@ -49,7 +49,8 @@ function thread_minor_d(d, P) = d - 1.082532 * P;
 // starting at z = 0. `clearance` is diametral and enlarges the hole;
 // `z_clearance` is the axial play this part adds (widens the groove).
 module internal_thread_cutter(d, P, h, clearance = 0.2, N = 180, zres = 16, z_clearance = 0) {
-    assert(z_clearance >= 0 && z_clearance <= P / 4 + 1e-9, str("z_clearance of an internal thread must be 0..P/4 (", P / 4, ")"));
+    // above P/4 the crest of the nut tooth gets pointed and slightly lower: still valid
+    assert(z_clearance >= 0 && z_clearance <= P / 2 + 1e-9, str("z_clearance of an internal thread must be 0..P/2 (", P / 2, ")"));
     helix_solid(h, P, thread_minor_d(d, P) / 2 + clearance / 2, d / 2 + clearance / 2, N, zres, z_clearance / 2);
 }
 

@@ -22,6 +22,8 @@ use <../../lib/optsys.scad>
 thread = "L39"; // [L39:L39 - 39 mm x 26 TPI (enlarger lenses), M39x1:M39 x 1, M42x1:M42 x 1, T2:T2 - M42 x 0.75, RMS:RMS - 0.8 in x 36 TPI (objectives), M25x0.75:M25 x 0.75 (Leica / Nikon objectives), M27x0.75:M27 x 0.75 (Zeiss objectives), M26x36TPI:M26 x 36 TPI (Mitutoyo objectives)]
 // Diametral clearances to test, one ring each
 clearances = [0.05, 0.15, 0.25, 0.35, 0.45];
+// Axial clearance (play along Z between flanks) added to every ring: printed flat, the flanks are 30 deg from the bed, so FDM threads mostly need axial play. Max = pitch / 2
+z_clearance = 0.2; // [0:0.01:0.5]
 
 /* [Rings] */
 // Ring height (thread length)
@@ -65,7 +67,7 @@ assert(ring_h >= 2 * P, "ring_h too short: at least two turns");
 assert(text_size <= ring_wall * 0.7, "text_size too large for ring_wall");
 
 echo(str("Thread ", thread, ": Ø", d, " x ", P, " mm pitch (", 25.4 / P, " TPI), ", n, " rings Ø", od, " x ", ring_h,
-         ", clearances ", clearances));
+         ", clearances ", clearances, " diametral + ", z_clearance, " axial"));
 for (c = clearances)
     echo(str("  clearance ", c, ": major Ø", d + c, ", minor Ø", thread_minor_d(d, P) + c));
 
@@ -74,7 +76,7 @@ module ring(c) {
     rmaj = d / 2 + c / 2;
     difference() {
         chamfered_extrude(ring_h, chamfer, 4, eps) circle(d = od);
-        translate([0, 0, -P]) internal_thread_cutter(d, P, ring_h + 2 * P, c, thread_n, thread_zres);
+        translate([0, 0, -P]) internal_thread_cutter(d, P, ring_h + 2 * P, c, thread_n, thread_zres, z_clearance);
         // entry chamfers (45 deg cones from the major diameter)
         for (z = [0, ring_h]) translate([0, 0, z]) mirror([0, 0, z == 0 ? 0 : 1])
             translate([0, 0, -eps]) cylinder(r1 = rmaj + entry_chamfer, r2 = rmin - eps, h = rmaj + entry_chamfer - rmin + eps);

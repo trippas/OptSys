@@ -40,7 +40,7 @@ A set of short rings (5 mm, about 5 turns for L39) with the same internal thread
 | `RMS - microscope objectives` | Ø20.32 × 0.706 (36 TPI) | Most finite objectives |
 | `M25 x 0.75 - Leica / Nikon objectives` | Ø25 × 0.75 | Leica / Nikon objectives |
 
-Also available in `thread`: `M39x1`, `M42x1`, `T2` (M42 × 0.75), `M27x0.75` (Zeiss), `M26x36TPI` (Mitutoyo). Default clearances: 0.05, 0.15, 0.25, 0.35, 0.45 mm. With L39, the 0.15 ring has about the same profile as the user's tested M39 quick-mount adapter (major Ø39.16, minor Ø38.0).
+Also available in `thread`: `M39x1`, `M42x1`, `T2` (M42 × 0.75), `M27x0.75` (Zeiss), `M26x36TPI` (Mitutoyo). Default clearances: 0.05, 0.15, 0.25, 0.35, 0.45 mm, all with `z_clearance` = 0.2 mm of axial play (printed flat, FDM threads mostly need play along the flanks). With L39, the 0.15 ring has about the same profile as the user's tested M39 quick-mount adapter (major Ø39.16, minor Ø38.0).
 
 Threads use the OptSys 60° profile (`lib/threads.scad`); lens threads are 55° Whitworth, which the clearance absorbs. Both ends have a 45° entry chamfer.
 

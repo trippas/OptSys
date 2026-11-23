@@ -39,7 +39,9 @@ Two interfaces with the same groove profile, **not interchangeable**:
 
 Parameters:
 
-- `thread_clearance`: diametral clearance of the lens thread. Default 0.15 mm, which reproduces the tested M39 adapter. Calibrate with the [thread test rings](../test_coupons/README.md).
+- `thread_clearance`: diametral clearance of the lens thread. Default 0.15 mm, which reproduces the tested M39 adapter. Keep it small: at 0.6 the L39 thread engages only 0.23 of its 0.53 mm depth, and the lens can start one turn ahead on one side and seat tilted (one pitch across Ø39 ≈ 1.4°).
+- `thread_z_clearance`: axial play between the flanks (default 0.2 mm), without loosening the radial engagement. Printed flat, the flanks are only 30° from the bed (layer steps, sag): if the lens is hard to screw in, raise this one. Calibrate both with the [thread test rings](../test_coupons/README.md).
+- `hub_wall = 0`: no hub; the lens rests on the flange top (the thread is shortened to fit in the spigot + flange: 4.1 mm for L39).
 - `hub_h`: raises the lens register above the receptor seat face (e.g. to set an objective's parfocal distance). The console prints where the lens flange / objective shoulder sits.
 - `bore_d_set`: clear bore under the thread (automatic = as large as the spigot walls allow, Ø35.4 for QM42).
 - `orientation`: `spigot_down` (as the tested adapter) or `lens_down` (lens face on the bed: the flange underside, which is the seat reference, prints as a top surface).
