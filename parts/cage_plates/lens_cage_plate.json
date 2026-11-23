@@ -145,7 +145,7 @@
             "thread_d_set": 0,
             "aperture_d_set": 0,
             "ring_id_set": 0,
-            "recess_front": "false",
+            "recess_front": "true",
             "recess_back": "true",
             "lens_mount": "qm",
             "tpu_block_h_set": 0,

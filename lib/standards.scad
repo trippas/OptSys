@@ -58,6 +58,8 @@ function thread_spec_pitch(name) = _thread(name)[2];
 //             in a 10 mm plate with 1.5 mm bellows recesses on both faces
 //             the flange sits on the front recess floor, the spigot fills
 //             the web between both floors and the screw is centered.
+//             Ø46 flange: fits on the 47 mm recess floor of the 60 mm
+//             plate, inside its magnets (from r = 23.4).
 //   QM42-EPI  the user's tested EPI quick-mount plate and M39 adapter
 //             (10 mm plate without recesses, screw at mid thickness).
 //             Same groove, 1.5 mm deeper; not interchangeable with QM42.
@@ -67,7 +69,7 @@ function thread_spec_pitch(name) = _thread(name)[2];
 // receptor. Groove: flat step at "groove top", bottom (r - groove depth)
 // down to "cone top", conical flank back to r at "cone bottom".
 OPTSYS_QUICKMOUNTS = [
-    ["QM42",     42,  7, 50, 3, 3.5, 1.9, 3.7, 4.9, 1.7, "M4"],
+    ["QM42",     42,  7, 46, 3, 3.5, 1.9, 3.7, 4.9, 1.7, "M4"],
     ["QM42-EPI", 42, 10, 50, 3, 5,   3.4, 5.2, 6.4, 1.7, "M4"],
 ];
 

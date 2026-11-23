@@ -23,7 +23,7 @@ Two interfaces with the same groove profile, **not interchangeable**:
 |---|---|---|
 | Receptor | 10 mm plate with 1.5 mm bellows recesses on both faces: flange on the front recess floor, spigot fills the 7 mm web | 10 mm plate without recesses |
 | Spigot | Ø42 × 7 mm | Ø42 × 10 mm |
-| Flange | Ø50 × 3 mm | Ø50 × 3 mm |
+| Flange | Ø46 × 3 mm (fits on the 47 mm recess floor of the 60 mm plate, inside its magnets) | Ø50 × 3 mm |
 | Lock screw | M4, 3.5 mm below the seat face (plate center) | M4, 5 mm below the seat face (plate center) |
 | Groove | flat step 1.9 mm below the seat, bottom Ø38.6, conical flank from 3.7 to 4.9 mm | step 3.4, flank from 5.2 to 6.4 mm |
 
@@ -48,8 +48,8 @@ Parameters:
 
 Use `parts/cage_plates/lens_cage_plate.scad` with one of the QM presets:
 
-- `50 mm QM42-EPI receptor, V rod seats (EPI style, no recess)` (the Ø50.6 flange pocket would leave too thin a wall next to the clamp nuts on the 63 mm plate)
-- `60 mm QM42 receptor, V rod seats` (no front bellows recess, the flange does not fit in the 60 mm recess: it sits in a Ø50.6 × 1.5 pocket instead)
+- `50 mm QM42-EPI receptor, V rod seats (EPI style, no recess)` (set `qm = QM42` for OptSys adapters: the flange then sits in a Ø46.6 × 1.5 pocket)
+- `60 mm QM42 receptor, V rod seats` (flange seats on the front recess floor; the bellows frame must clear the Ø46 flange)
 - `100 mm QM42 receptor, V rod seats` (flange seats on the front recess floor)
 
 Receptor options (section *Lens mount*): `qm_screw_side`, `qm_fixing` (`insert` Ø5.4 hole, or captive `nut` dropped in from the seat face, outside the flange), `qm_locate` (`bore`: tight Ø42.04 bore as tested; `pins`: two Ø3 dowel pins opposite the screw at ±50° and a Ø42.3 bore, so the centering no longer depends on how the bore prints). The console prints the lock screw length (M4 setscrew).

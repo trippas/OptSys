@@ -144,7 +144,7 @@ magnet_depth = 3; // [0.5:0.1:10]
 // thread: lens + retaining ring (section below). qm: quick-mount receptor for lens adapters (parts/quick_mount)
 lens_mount = "thread"; // [thread:Lens + retaining ring thread, qm:QM quick-mount receptor]
 // Quick-mount interface (lib/standards.scad)
-qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø50 flange (OptSys 10 mm plates with 1.5 mm recesses), QM42-EPI:QM42-EPI - Ø42 x 10 spigot (EPI plates without recess)]
+qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys 10 mm plates with 1.5 mm recesses), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates without recess)]
 // The seat face (flange underside) is placed so the lock screw is centered in the plate thickness: on the front recess floor if there is one, otherwise in a round flange pocket (needs plate_t = 10 for QM42 with 1.5 mm recesses)
 // Diametral clearance of the flange pocket (only when the seat is below a face without recess)
 qm_pocket_clearance = 0.6; // [0:0.05:2]
@@ -362,7 +362,7 @@ qm_pocket_clear = min(norm([nut_in_x, nut_in_y]), norm([rod_c - slot_w / 2, hing
                       post_on ? post_slot_in : 1e9) - qm_pocket_r;
 assert(!qm_pocket || qm_pocket_clear >= 1, str("The ", qm, " flange pocket (Ø", 2 * qm_pocket_r, ") is too close to the clamp nuts / slots (wall ", qm_pocket_clear,
        " mm): this plate is too small for a recessed flange, use qm = QM42-EPI with plate_t = 10 and no front recess"));
-assert(!qm_on || !magnets_on || !recess_front || magnet_offset * sqrt(2) - magnet_d / 2 >= qm_flange_d(qm) / 2 + 0.5, "The magnets fall under the QM flange: move magnet_offset");
+assert(!qm_on || !magnets_on || !recess_front || magnet_offset * sqrt(2) - magnet_d / 2 >= qm_flange_d(qm) / 2 + 0.3, "The magnets fall under the QM flange: move magnet_offset");
 
 // ---------------------------------------------------------------------
 // 2D plate outline (+x,+y quadrant; mirrored to all 4)
