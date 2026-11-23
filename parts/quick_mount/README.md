@@ -52,7 +52,7 @@ Use `parts/cage_plates/lens_cage_plate.scad` with one of the QM presets:
 - `60 mm QM42 receptor, V rod seats` (flange seats on the front recess floor; the bellows frame must clear the Ø46 flange)
 - `100 mm QM42 receptor, V rod seats` (flange seats on the front recess floor)
 
-Receptor options (section *Lens mount*): `qm_screw_side`, `qm_fixing` (`insert` Ø5.4 hole, or captive `nut` `qm_nut_depth` = 5 mm from the edge with its slot open on the front face, like the post mount), `qm_locate` (`bore`: tight Ø42.04 bore as tested; `pins`: two Ø3 dowel pins opposite the screw at ±50° and a Ø42.3 bore, so the centering no longer depends on how the bore prints). The console prints the lock screw length (M4 setscrew).
+Receptor options (section *Lens mount*): `qm_screw_side`, `qm_screw_hole_d` (lock screw hole, default 4.5 = M4 clearance), `qm_fixing` (`insert` Ø5.4 hole, or captive `nut` `qm_nut_depth` = 5 mm from the edge with its slot open on the front face, like the post mount), `qm_locate` (`bore`: tight Ø42.04 bore as tested; `pins`: two Ø3 dowel pins opposite the screw at ±50° and a Ø42.3 bore, so the centering no longer depends on how the bore prints). The console prints the lock screw length (M4 setscrew).
 
 ## Hardware
 
