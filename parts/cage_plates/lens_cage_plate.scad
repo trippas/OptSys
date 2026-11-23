@@ -152,6 +152,8 @@ qm_pocket_clearance = 0.6; // [0:0.05:2]
 qm_screw_side = "top"; // [top:+Y side (top), bottom:-Y side (bottom), left:-X side (left), right:+X side (right)]
 // Lock screw fixing: heat-set insert at the edge, or captive nut dropped in from the seat face
 qm_fixing = "insert"; // [insert:Heat-set insert, nut:Captive nut]
+// Captive nut: distance from the edge to the nut center (slot open on the front face, like the post mount)
+qm_nut_depth = 5; // [3:0.1:20]
 // Hole for the heat-set insert
 qm_insert_d = 5.4; // [3:0.05:10]
 qm_insert_l = 8; // [3:0.5:20]
@@ -296,7 +298,7 @@ if (!qm_on) echo(str("Lens Ø", lens_d, " -> aperture Ø", aperture_d, ", thread
                      ". Ring play: radial ", thread_clearance, " mm, axial ", round(100 * (thread_z_clearance + 2 * thread_clearance * tan(30))) / 100, " mm"));
 if (qm_on) echo(str("QM receptor ", qm, ": bore Ø", 2 * center_r, " (", qm_locate == "pins" ? str("2 dowel pins Ø", qm_pin_d, " x ", plate_t, " mm") : "tight bore", "), seat face at z = ", qm_seat_z,
                     ", lock screw ", qm_screw(qm), " x ", ceil(qm_screw_len(qm, plate_w / 2) / 2) * 2, " setscrew on the ", qm_screw_side, " side (",
-                    qm_fixing == "insert" ? str("heat-set insert, hole Ø", qm_insert_d) : str(qm_screw(qm), " nut from the front face"), ")",
+                    qm_fixing == "insert" ? str("heat-set insert, hole Ø", qm_insert_d) : str(qm_screw(qm), " nut ", qm_nut_depth, " mm from the edge, slot open on the front face"), ")",
                     qm_pocket ? str(", flange pocket Ø", 2 * qm_pocket_r, " x ", plate_t - qm_seat_z, " mm") : "",
                     ", spigot ", qm_seat_z - qm_l(qm) >= z_fb - 1e-6 ? str("ends ", qm_seat_z - qm_l(qm) - z_fb, " mm above the back floor") : str("sticks out ", z_fb - (qm_seat_z - qm_l(qm)), " mm past the back floor")));
 if (qm_on && abs(qm_zs - plate_t / 2) > 0.01)
@@ -353,7 +355,11 @@ assert(!qm_on || !recess_front || qm_flange_d(qm) <= recess_sq - 1, str("The ", 
 assert(!qm_on || !post_on || post_angle != qm_angle, "The QM lock screw and the post mount are on the same side: change qm_screw_side or post_mount");
 assert(!qm_on || qm_fixing != "insert" || qm_zs - qm_insert_d / 2 >= 0.6 - 1e-6, "The plate is too thin below the seat face for the QM insert: increase plate_t or disable recess_front");
 assert(!qm_on || qm_fixing != "nut" || qm_zs - nut_ac(nut_af(qm_screw(qm))) / 2 - 0.1 >= 0.6, "The plate is too thin below the seat face for the QM nut: increase plate_t or use the insert");
-assert(!qm_on || qm_fixing != "nut" || qm_nut_r(qm) + (nut_t(qm_screw(qm)) + 0.2) / 2 + 1.2 <= plate_w / 2, "No room for the QM nut between the flange and the edge: use the insert");
+qm_nut_in = plate_w / 2 - qm_nut_depth - (nut_t(qm_screw(qm)) + 0.2) / 2;   // inner face of the QM nut slot (from the center)
+assert(!qm_on || qm_fixing != "nut" || qm_nut_depth - (nut_t(qm_screw(qm)) + 0.2) / 2 >= 1.2, "The QM nut is too close to the edge: increase qm_nut_depth");
+assert(!qm_on || qm_fixing != "nut" || qm_nut_in - center_r >= 1.5, str("The QM nut is too close to the bore: reduce qm_nut_depth (wall ", qm_nut_in - center_r, " mm)"));
+assert(!qm_on || qm_fixing != "nut" || !recess_front || qm_nut_in - recess_top_half >= 0.5, "The QM nut slot touches the front recess: reduce qm_nut_depth");
+assert(!qm_on || qm_fixing != "nut" || !qm_pocket || qm_nut_in - qm_pocket_r >= 1, "The QM nut slot touches the flange pocket: reduce qm_nut_depth");
 assert(!qm_on || qm_fixing != "insert" || qm_insert_l <= plate_w / 2 - center_r - 1, "qm_insert_l is longer than the wall between the bore and the edge");
 assert(!qm_on || qm_zs + clearance_d(qm_screw(qm)) / 2 <= z_ft - 0.6 && qm_zs - clearance_d(qm_screw(qm)) / 2 >= z_fb + 0.6 - 1e-6,
        "The QM lock screw hole breaks into a bellows recess: use plate_t = 10 with 1.5 mm recesses (QM42) or no recesses and plate_t = 10 (QM42-EPI)");
@@ -498,7 +504,7 @@ module central_cuts() {
     if (qm_on)
     {
         qm_receptor_cut(qm, qm_seat_z, plate_w / 2, qm_angle, qm_bc, qm_fixing, qm_insert_d, qm_insert_l, 0.2,
-                        qm_locate, qm_pin_d, qm_pin_hole_d, qm_pin_a, 0.4, -1, nut_top = plate_t);
+                        qm_locate, qm_pin_d, qm_pin_hole_d, qm_pin_a, 0.4, -1, nut_top = plate_t, nut_depth = qm_nut_depth);
         // round pocket for the flange, so the seat face (and the screw) can sit below a face without recess
         if (qm_pocket) {
             translate([0, 0, qm_seat_z]) cylinder(r = qm_pocket_r, h = plate_t - qm_seat_z + 1);
