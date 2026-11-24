@@ -8,7 +8,7 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 
 | Part | Folder | Standards | Description |
 |---|---|---|---|
-| Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 100 | Lens mount with retaining-ring thread or QM quick-mount receptor, magnetic bellows recess, compliant rod clamps with V rod seats, optional TPU hinges and post mount |
+| Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 100 | Lens mount with retaining-ring thread or QM quick-mount receptor, magnetic bellows recess, compliant rod clamps with V rod seats, engraved label, optional post mount |
 | QM lens adapter | [`parts/quick_mount`](parts/quick_mount/README.md) | QM42, QM42-EPI | Quick-mount adapter for enlarger lenses (L39), objectives (RMS, M25, ...) or M42 / T2 bellows, locked in a QM receptor plate by one screw |
 | Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
 | Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads | Rod seat test (V seats vs round seat vs tight holes) and internal thread test rings (L39 enlarger, RMS, M25 objectives) |
@@ -39,7 +39,7 @@ lib/                     shared code, no output of its own
   geometry.scad          2D/3D helpers (sectors, closing, mirror4, chamfered boxes, ...)
   chamfers.scad          chamfered extrusions, drafted pockets
   threads.scad           printable internal/external threads
-  multimaterial.scad     dovetails for rigid + TPU parts
+  multimaterial.scad     dovetails for rigid + TPU parts (not used at the moment)
   gears.scad             involute spur gears and racks
   extrusions.scad        slotted profile outlines (ghost previews)
   rod_seats.scad         V rod seats (no-play plate-to-rod contact)
@@ -68,7 +68,7 @@ Open parts from their folder inside the repository: they load the library throug
    - A `standard` selector when the part comes in several sizes, using non-numeric keys (`"30mm"`) compared with `str()`.
    - Every numeric Customizer parameter has an explicit range and step: `x = 0; // [0:0.05:200]` (otherwise the Customizer may round decimals).
    - Presets in `<part>.json` with numeric (not quoted) values.
-   - A `part` selector (`assembly`, `rigid`, `tpu`, `single`, accessories) for multi-material parts: `rigid = body - region`, `tpu = body ∩ region`.
+   - A `part` selector (`assembly` for the view, then each printable part).
    - One `echo` summary line (standard, key dimensions, hardware) and `assert()` checks with messages that say which parameter to change.
    - Wrap heavy subtrees in `render()` so the F5 preview keeps working.
 4. Add a `README.md` and an image, list the part in the table above, and run `tools/check.sh`.

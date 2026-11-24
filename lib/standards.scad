@@ -51,8 +51,8 @@ function thread_spec_pitch(name) = _thread(name)[2];
 // Quick mounts (QM): a flanged spigot on the lens adapter goes into a bore
 // in the receptor plate; a radial screw presses on a conical flank of a
 // groove in the spigot, which pulls the flange against the seat face
-// (axial position and tilt) and pushes the spigot against the bore wall
-// or two locating pins (centering). The groove runs all around, so the
+// (axial position and tilt) and pushes the spigot against the opposite
+// bore wall (centering). The groove runs all around, so the
 // adapter can be clocked freely.
 //   QM42      OptSys: 7 mm spigot and screw 3.5 mm below the seat face, so
 //             in a 10 mm plate with 1.5 mm bellows recesses on both faces
