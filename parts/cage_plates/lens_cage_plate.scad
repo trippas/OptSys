@@ -24,6 +24,8 @@ use <../../lib/optsys.scad>
 part = "assembly"; // [assembly:Assembly (view), plate:Plate, ring:Retaining ring]
 // Show ghost rods in the assembly
 show_rods = true;
+// Show dimensions and key data (bore / thread, clearances, sizes) in the preview (F5) only: never rendered or exported
+show_dims = true;
 
 /* [Standard] */
 // System size. Every parameter marked "0 = from standard" takes the preset value; any number you enter overrides it.
@@ -185,12 +187,6 @@ ring_slot_d = 1.5; // [0:0.1:10]
 // 45 deg chamfer on both ends of the ring thread (removes the elephant foot and the thin start of the thread)
 ring_chamfer = 0.5; // [0:0.1:1.5]
 
-/* [Label] */
-// Engrave the key data on a free side of the plate (QM: interface and bore Ø; thread: thread, usable thread length and clearances), so the render and the printed part show what was set
-label = true;
-// Maximum letter height (shrunk automatically to fit the side)
-label_size = 3; // [1.5:0.1:5]
-label_depth = 0.4; // [0.2:0.1:1]
 
 /* [Quality] */
 $fn = 96;
@@ -509,30 +505,35 @@ module lens_cuts() {
     }
 }
 
-module plate() { difference() { render(convexity = 4) outline_body(); central_cuts(); label_cut(); } }
+module plate() { difference() { render(convexity = 4) outline_body(); central_cuts(); } }
 
 // ---------------------------------------------------------------------
-// Label engraved on a free side
+// Preview-only dimensions (% modifier: F5 only, not in the render / STL)
 // ---------------------------------------------------------------------
-function fix2(x) = let(n = round(x * 100), i = floor(n / 100), f = n - 100 * i) str(i, ".", f < 10 ? "0" : "", f);
-function fix1(x) = let(n = round(x * 10), i = floor(n / 10)) str(i, ".", n - 10 * i);
-label_lines = qm_on ? [qm, str("Ø", fix2(2 * center_r))]
-                    : [str("M", thread_d, "x", thread_pitch, " L", fix1(thread_len)), str("c", fix2(thread_clearance), " z", fix2(thread_z_clearance))];
-// free sides (not used by the post mount or the QM screw), -Y/+Y first: no hinge notches there
-label_sides = [for (a = [270, 90, 0, 180]) if ((!post_on || a != post_angle) && (!qm_on || a != qm_angle)) a];
-label_angle = label_sides[0];
-// usable length of that side: between the rod openings (±Y) or between the hinge notches (±X)
-label_len = label_angle % 180 == 90 ? 2 * (open_x0 - body_corner_r - 1.5) : 2 * (hinge_y - notch_w / 2 - notch_entry_r - 1.5);
-label_h = min(label_size, label_len / (0.62 * max([for (l = label_lines) len(l)])), (plate_t - 2 * edge_chamfer - 1) / (1.3 * len(label_lines)));
-if (label && part != "ring") echo(str("Label on the ", label_angle == 270 ? "bottom" : label_angle == 90 ? "top" : label_angle == 0 ? "right" : "left", " side (", label_h, " mm letters): ", label_lines));
-assert(!label || part == "ring" || label_h >= 1.5, "The label does not fit on the free side: set label = false or reduce the text");
+dim_size = max(2, plate_w / 25);
+dim_z    = (part == "ring" ? ring_h : plate_t) + 0.5;
+plate_notes = [str("Plate ", fmt1(plate_w), " x ", fmt1(plate_t), " mm, rods Ø", rod_d, " at ", fmt1(2 * rod_c), " mm"),
+               str("Recess ", recess_front && recess_back ? "both faces" : recess_front ? "front" : recess_back ? "back" : "none",
+                   post_on ? str(", post mount ", post_mount) : "")];
+qm_notes    = [str(qm, " receptor: bore Ø", fmt2(2 * center_r), " (clearance ", fmt2(qm_bc), ")"),
+               str("Lock screw ", qm_screw(qm), " x ", ceil(qm_screw_len(qm, plate_w / 2) / 2) * 2, " (", qm_screw_side, "), hole Ø", fmt2(qm_screw_hole_d)),
+               str("Nut ", fmt1(qm_nut_depth), " mm from the edge, seat at z ", fmt1(qm_seat_z))];
+thread_notes = [str("Thread M", thread_d, "x", thread_pitch, ", length ", fmt1(thread_len), " mm"),
+                str("Clearance ", fmt2(thread_clearance), " radial + ", fmt2(thread_z_clearance), " axial"),
+                str("Lens Ø", lens_d, ", aperture Ø", fmt1(aperture_d)),
+                str("Ring: height ", ring_h, ", ID Ø", fmt1(ring_id))];
 
-module label_cut() {
-    if (label) rotate(label_angle - 270)   // built on the -Y face, readable from outside
-        for (i = [0:len(label_lines) - 1])
-            translate([0, -plate_w / 2 + label_depth, plate_t / 2 + ((len(label_lines) - 1) / 2 - i) * 1.3 * label_h])
-                rotate([90, 0, 0]) linear_extrude(label_depth + 1)
-                    text(label_lines[i], size = label_h, font = "Liberation Sans:style=Bold", halign = "center", valign = "center");
+module dims() {
+    if (part == "ring") {
+        dim_linear([-(thread_d - thread_clearance) / 2, 0], [(thread_d - thread_clearance) / 2, 0], str("M", thread_d, "x", thread_pitch), dim_size, dim_z);
+        note_block([str("Ring M", thread_d, "x", thread_pitch, ", height ", ring_h, ", ID Ø", fmt1(ring_id)),
+                    str("Clearance ", fmt2(thread_clearance), " radial + ", fmt2(thread_z_clearance), " axial")],
+                   [thread_d / 2 + 5, thread_d / 2], dim_size, dim_z);
+    } else {
+        dim_linear([-center_r, 0], [center_r, 0], qm_on ? str("Ø", fmt2(2 * center_r)) : str("M", thread_d, "x", thread_pitch), dim_size, dim_z);
+        dim_linear([-plate_w / 2, -plate_w / 2 - 2 * dim_size], [plate_w / 2, -plate_w / 2 - 2 * dim_size], fmt1(plate_w), dim_size, dim_z);
+        note_block(concat(qm_on ? qm_notes : thread_notes, plate_notes), [plate_w / 2 + 5, plate_w / 2], dim_size, dim_z);
+    }
 }
 
 // ---------------------------------------------------------------------
@@ -557,6 +558,8 @@ module retaining_ring() {
 // ---------------------------------------------------------------------
 // Output
 // ---------------------------------------------------------------------
+if (show_dims) %dims();
+
 if (part == "ring") retaining_ring();
 else if (part != "assembly") plate();   // "plate" (also "single" / "rigid" from older presets)
 else union() {

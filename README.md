@@ -42,6 +42,7 @@ lib/                     shared code, no output of its own
   multimaterial.scad     dovetails for rigid + TPU parts (not used at the moment)
   gears.scad             involute spur gears and racks
   extrusions.scad        slotted profile outlines (ghost previews)
+  annotations.scad       preview-only dimension lines and notes (use with %)
   rod_seats.scad         V rod seats (no-play plate-to-rod contact)
   quickmount.scad        QM quick mount: adapter spigot/flange, receptor cutter
 parts/<family>/          one folder per part family

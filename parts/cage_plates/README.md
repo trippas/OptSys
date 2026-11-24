@@ -6,7 +6,7 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
 
 ![100 mm and 60 mm plates](../../docs/lens_cage_plate.png)
 
-*Left: 60 mm standard with a lens thread. Right: 60 mm QM42 receptor. The engraved label shows the thread and its clearances, or the QM bore diameter.*
+*Top: 60 mm standard with a lens thread, and 60 mm QM42 receptor. Bottom: the preview-only dimensions of the threaded plate.*
 
 ## Features
 
@@ -20,7 +20,7 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
 - **Lens-driven geometry**: set the lens diameter and the aperture, seat cone, internal thread and retaining ring follow automatically.
 - **Magnetic bellows recess** on the front, back, both or neither face: 45° walls for self-centering, pry notches for removal, and magnet pockets.
 - **Compliant rod clamps**: slotted arm with a flexure hinge, locked with an M3 screw into a captive nut.
-- **Engraved label** (`label`): on a free side, the QM interface and bore diameter (`QM42` / `Ø42.30`), or the thread, usable thread length and clearances (`M43x1.5 L5.0` / `c0.20 z0.25`). It shows in the render and on the printed part, so you can tell prints apart. The letters shrink to fit the side; the console says which side it went on.
+- **Dimensions in the preview** (`show_dims`): the F5 preview shows the bore or thread diameter, the plate width and the key data (QM bore Ø and clearance, lock screw, or thread, length, clearances, lens, aperture and ring). They use OpenSCAD's `%` modifier, so they never appear in the render (F6) or in the exported STL.
 - **Post mount**: optional captive M4 nut in the middle of any side, to fix the plate on a post with an M4 setscrew stud.
 - **Retaining ring** generated to match the thread.
 - **Interference checks**: when a parameter change makes features collide, OpenSCAD stops with a message saying what to adjust.
