@@ -1,0 +1,56 @@
+{
+    "parameterSets": {
+        "60 mm, 40-150 mm between plates, PETG frames": {
+            "standard": "60mm",
+            "length_min": 40,
+            "length_max": 150,
+            "sheets_set": 0,
+            "end_bottom": "frame",
+            "end_top": "frame",
+            "outer_w_set": 0,
+            "clear_d_set": 0,
+            "layer_h": 0.15,
+            "first_layer_h": 0.2,
+            "sheet_layers": 2,
+            "gap_layers": 3,
+            "frame_top_h": 2,
+            "magnet_d_set": 4,
+            "magnet_h": 2.5
+        },
+        "60 mm test coupon: 10 sheets, frame + TPU flange": {
+            "standard": "60mm",
+            "length_min": 40,
+            "length_max": 150,
+            "sheets_set": 10,
+            "end_bottom": "frame",
+            "end_top": "flange",
+            "outer_w_set": 0,
+            "clear_d_set": 0,
+            "layer_h": 0.15,
+            "first_layer_h": 0.2,
+            "sheet_layers": 2,
+            "gap_layers": 3,
+            "frame_top_h": 2,
+            "magnet_d_set": 4,
+            "magnet_h": 2.5
+        },
+        "100 mm, 40-150 mm between plates, PETG frames": {
+            "standard": "100mm",
+            "length_min": 40,
+            "length_max": 150,
+            "sheets_set": 0,
+            "end_bottom": "frame",
+            "end_top": "frame",
+            "outer_w_set": 0,
+            "clear_d_set": 0,
+            "layer_h": 0.15,
+            "first_layer_h": 0.2,
+            "sheet_layers": 2,
+            "gap_layers": 3,
+            "frame_top_h": 2.5,
+            "magnet_d_set": 6,
+            "magnet_h": 3
+        }
+    },
+    "fileFormatVersion": "1"
+}

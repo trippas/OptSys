@@ -20,6 +20,27 @@ function cage_rod_d(name)       = _cage(name)[2];
 function cage_thread(name)      = _cage(name)[3];
 function cage_plate_w(name)     = _cage(name)[4];
 
+// Magnetic bellows interface of the OptSys plates: a square recess with
+// chamfered corners on the plate face, with magnets near its corners; the
+// bellows frame drops into it.
+// [cage, recess floor side, corner chamfer (45 deg leg), corner radius,
+//  depth, draft (wall growth from floor to face), magnet d, magnet position
+//  (+-x, +-y)]
+OPTSYS_BELLOWS_RECESS = [
+    ["50mm",  37, 5, 1, 1.5, 1.5, 4, 14],
+    ["60mm",  47, 5, 1, 1.5, 1.5, 5, 18.3],
+    ["100mm", 70, 5, 1, 1.5, 1.5, 6, 26.5],
+];
+
+function _recess(name) = OPTSYS_BELLOWS_RECESS[search([str(name)], OPTSYS_BELLOWS_RECESS)[0]];
+function cage_recess_sq(name)      = _recess(name)[1];
+function cage_recess_chamfer(name) = _recess(name)[2];
+function cage_recess_corner_r(name) = _recess(name)[3];
+function cage_recess_depth(name)   = _recess(name)[4];
+function cage_recess_draft(name)   = _recess(name)[5];
+function cage_magnet_d(name)       = _recess(name)[6];
+function cage_magnet_offset(name)  = _recess(name)[7];
+
 // Threads: [name, nominal diameter (mm), pitch (mm)]
 // SM series are UN 40 TPI (pitch 0.635 mm): at the limit of FDM printing,
 // test before relying on them for commercial lens tubes.

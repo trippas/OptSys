@@ -11,6 +11,7 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 | Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 100 | Lens mount with retaining-ring thread or QM quick-mount receptor, magnetic bellows recess, compliant rod clamps with V rod seats, engraved label, optional post mount |
 | QM lens adapter | [`parts/quick_mount`](parts/quick_mount/README.md) | QM42, QM42-EPI | Quick-mount adapter for enlarger lenses (L39), objectives (RMS, M25, ...) or M42 / T2 bellows, locked in a QM receptor plate by one screw |
 | Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
+| Printed bellows | [`parts/bellows`](parts/bellows/README.md) | 60 mm, OptSys 100 | Light-tight bellows printed compressed in TPU with PLA spacers and PETG magnetic frames (multi-material); fits the bellows recess of the plates |
 | Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads | Rod seat test (V seats vs round seat vs tight holes) and internal thread test rings (L39 enlarger, RMS, M25 objectives) |
 
 ## Interface standards
@@ -34,7 +35,7 @@ Note: the SM thread series are 40 TPI (0.635 mm pitch), at the limit of FDM prin
 ```
 lib/                     shared code, no output of its own
   optsys.scad            entry point: use <../../lib/optsys.scad>
-  standards.scad         cage, thread, post and extrusion standards
+  standards.scad         cage, bellows recess, thread, post and extrusion standards
   hardware.scad          metric nuts / clearance holes, captive nut slots, bearings
   geometry.scad          2D/3D helpers (sectors, closing, mirror4, chamfered boxes, ...)
   chamfers.scad          chamfered extrusions, drafted pockets
@@ -45,6 +46,7 @@ lib/                     shared code, no output of its own
   annotations.scad       preview-only dimension lines and notes (use with %)
   rod_seats.scad         V rod seats (no-play plate-to-rod contact)
   quickmount.scad        QM quick mount: adapter spigot/flange, receptor cutter
+  bellows.scad           printed bellows: TPU sheet stack, joints and cut PLA spacers
 parts/<family>/          one folder per part family
   <part>.scad            the part, with Customizer parameters
   <part>.json            Customizer presets (same base name)

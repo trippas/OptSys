@@ -102,7 +102,7 @@ recess_front = true;
 recess_back = true;
 // Side of the recess floor square (0 = from standard)
 recess_sq_set = 0; // [0:0.5:250]
-// 45 deg chamfer of the square corners
+// 45 deg chamfer of the square corners. Chamfer, corner radius, depth and draft must match OPTSYS_BELLOWS_RECESS in lib/standards.scad for the printed bellows frames to fit
 recess_chamfer = 5; // [0:0.5:30]
 recess_corner_r = 1; // [0:0.1:5]
 // Recess depth
@@ -214,12 +214,13 @@ rod_c         = pick(rod_c_set,         cage_rod_spacing("100mm") / 2, cage_rod_
 lens_d        = pick(lens_d_set,        60,   38.1, 25.4);   // 60 mm: Ø1.5", 50 mm: Ø1"
 hinge_y       = pick(hinge_y_set,       17.5, 14.5, 10.6);
 nut_x_off     = pick(nut_x_off_set,     4.5,  3.5,  3.5);
-recess_sq     = pick(recess_sq_set,     70,   47,   37);
+std_name      = std("100mm", "60mm", "50mm");
+recess_sq     = recess_sq_set > 0 ? recess_sq_set : cage_recess_sq(std_name);
 lobe_w        = pick(lobe_w_set,        14,   10,   6);
 lobe_reach    = pick(lobe_reach_set,    45,   31.5, 26);
 lobe_r        = pick(lobe_r_set,        3,    2.5,  2);
-magnet_d      = pick(magnet_d_set,      6,    5,    4);
-magnet_offset = pick(magnet_offset_set, 26.5, 18.3, 14);
+magnet_d      = magnet_d_set      > 0 ? magnet_d_set      : cage_magnet_d(std_name);
+magnet_offset = magnet_offset_set > 0 ? magnet_offset_set : cage_magnet_offset(std_name);
 
 // ---------------------------------------------------------------------
 // Derived values
