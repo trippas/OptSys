@@ -12,7 +12,7 @@ Taken from the user's tested quick mount (epi-illuminator cage, Pentax bellows):
 
 - The adapter has a **Ø42 spigot** and a **Ø46 × 3 flange** (Ø50 on QM42-EPI). The spigot goes into a Ø42 bore in the receptor; the flange underside rests on the receptor seat face.
 - Around the spigot runs a **groove** with a flat step on top and a **conical flank** below.
-- A radial **M4 lock screw** in the receptor (heat-set insert or captive nut) presses on the conical flank. Part of its force pulls the flange onto the seat face (about 1.4 × the screw force with the 55° flank): the seat face sets the axial position and the tilt. The rest pushes the spigot against the bore wall (or two locating pins): that sets the centering.
+- A radial **M4 lock screw** in the receptor (captive nut) presses on the conical flank. Part of its force pulls the flange onto the seat face (about 1.4 × the screw force with the 55° flank): the seat face sets the axial position and the tilt. The rest pushes the spigot against the opposite bore wall: that sets the centering.
 - The groove runs all around, so the lens can be clocked freely (aperture scale where you want it).
 
 All dimensions live in `OPTSYS_QUICKMOUNTS` (`lib/standards.scad`); the geometry in `lib/quickmount.scad` (`qm_spigot_flange`, `qm_receptor_cut`).
@@ -50,13 +50,13 @@ Parameters:
 
 Use `parts/cage_plates/lens_cage_plate.scad` with one of the QM presets:
 
-- `50 mm QM42-EPI receptor, V rod seats (EPI style, no recess)` (set `qm = QM42` for OptSys adapters: the flange then sits in a Ø46.6 × 1.5 pocket)
+- `50 mm QM42 receptor, V rod seats` (uses `QM42-EPI`, for the EPI plates and adapters; set `qm = QM42` for OptSys adapters: the flange then sits in a Ø46.6 × 1.5 pocket)
 - `60 mm QM42 receptor, V rod seats` (flange seats on the front recess floor; the bellows frame must clear the Ø46 flange)
 - `100 mm QM42 receptor, V rod seats` (flange seats on the front recess floor)
 
-Receptor options (section *Lens mount*): `qm_screw_side`, `qm_screw_hole_d` (lock screw hole, default 4.5 = M4 clearance), `qm_fixing` (`insert` Ø5.4 hole, or captive `nut` `qm_nut_depth` = 5 mm from the edge with its slot open on the front face, like the post mount), `qm_locate` (`bore`: tight Ø42.04 bore as tested; `pins`: two Ø3 dowel pins opposite the screw at ±50° and a Ø42.3 bore, so the centering no longer depends on how the bore prints). The console prints the lock screw length (M4 setscrew).
+Receptor options (section *Lens mount*): `qm_bore_clearance` (diametral clearance of the Ø42 bore, default 0.3; the tested EPI plate had 0.04 in PLA), `qm_screw_side`, `qm_screw_hole_d` (lock screw hole, default 4.5 = M4 clearance), `qm_nut_depth` (captive M4 nut 5 mm from the edge, slot open on the front face, like the post mount). The bore diameter is engraved on the plate (`label`). The console prints the lock screw length (M4 setscrew).
 
 ## Hardware
 
-- Receptor: one M4 heat-set insert (or M4 nut) and one M4 setscrew (length printed in the console: M4 × 14 on the 50 mm plate, M4 × 20 on the 60 mm). Optional: two Ø3 × 10 dowel pins.
+- Receptor: one M4 nut and one M4 setscrew (length printed in the console: M4 × 14 on the 50 mm plate, M4 × 20 on the 60 mm).
 - Adapter: none.
