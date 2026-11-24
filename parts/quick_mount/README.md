@@ -50,7 +50,7 @@ Parameters:
 
 Use `parts/cage_plates/lens_cage_plate.scad` with one of the QM presets:
 
-- `50 mm QM42-EPI receptor, V rod seats (EPI style, no recess)` (set `qm = QM42` for OptSys adapters: the flange then sits in a Ø46.6 × 1.5 pocket)
+- `50 mm QM42 receptor, V rod seats` (uses `QM42-EPI`, for the EPI plates and adapters; set `qm = QM42` for OptSys adapters: the flange then sits in a Ø46.6 × 1.5 pocket)
 - `60 mm QM42 receptor, V rod seats` (flange seats on the front recess floor; the bellows frame must clear the Ø46 flange)
 - `100 mm QM42 receptor, V rod seats` (flange seats on the front recess floor)
 

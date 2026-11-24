@@ -21,7 +21,7 @@ use <../../lib/optsys.scad>
 
 /* [Output] */
 // What to generate
-part = "assembly"; // [assembly:Assembly (view), plate:Plate, ring:Retaining ring]
+part = "plate"; // [assembly:Assembly (view), plate:Plate, ring:Retaining ring]
 // Show ghost rods in the assembly
 show_rods = true;
 // Show dimensions and key data (bore / thread, clearances, sizes) in the preview (F5) only: never rendered or exported
@@ -30,6 +30,104 @@ show_dims = true;
 /* [Standard] */
 // System size. Every parameter marked "0 = from standard" takes the preset value; any number you enter overrides it.
 standard = "100mm"; // [100mm:100 mm - Ø8 rods at 85 mm (original), 60mm:60 mm - Ø6 rods at 60 mm (Thorlabs 60 mm compatible), 50mm:50 mm - Ø6 rods at 50 mm (OptSys, QM42 quick mount)]
+
+/* [Lens mount] */
+// thread: lens + retaining ring (section below). qm: quick-mount receptor for lens adapters (parts/quick_mount)
+lens_mount = "thread"; // [thread:Lens + retaining ring thread, qm:QM quick-mount receptor]
+// Quick-mount interface (lib/standards.scad)
+qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys 10 mm plates with 1.5 mm recesses), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates without recess)]
+// The seat face (flange underside) is placed so the lock screw is centered in the plate thickness: on the front recess floor if there is one, otherwise in a round flange pocket (needs plate_t = 10 for QM42 with 1.5 mm recesses)
+// Diametral clearance of the flange pocket (only when the seat is below a face without recess)
+qm_pocket_clearance = 0.6; // [0:0.05:2]
+// Side of the QM lock screw (must differ from the post mount side)
+qm_screw_side = "top"; // [top:+Y side (top), bottom:-Y side (bottom), left:-X side (left), right:+X side (right)]
+// Diameter of the lock screw hole (M4: 4.5 = clearance; smaller for a snugger screw, ~3.3 to thread the screw straight into the plastic)
+qm_screw_hole_d = 4.5; // [2.5:0.05:6]
+// Captive M4 nut for the lock screw: distance from the edge to the nut center (slot open on the front face, like the post mount)
+qm_nut_depth = 3.5; // [3:0.1:20]
+// Diametral clearance of the Ø42 bore for the adapter spigot (the lock screw pushes the spigot against the opposite wall, so centering does not depend on it)
+qm_bore_clearance = 0.3; // [0:0.01:1]
+
+/* [Lens and thread] */
+// Lens diameter: aperture, thread and retaining ring are derived from it (0 = from standard)
+lens_d_set = 0; // [0:0.05:200]
+// Radial width of the ledge the lens rests on (aperture = lens_d - 2x)
+lens_ledge = 1.5; // [0.2:0.1:10]
+// Manual clear aperture (0 = automatic)
+aperture_d_set = 0; // [0:0.05:200]
+// Height of the cylindrical lip below the seat cone
+lip_h = 0.5; // [0:0.1:5]
+thread_enable = true;
+// Minimum radial margin between lens and nominal thread diameter (thread is rounded up to the next whole mm)
+thread_margin = 2; // [0.5:0.1:10]
+// Manual nominal thread diameter (0 = automatic: lens_d=60 -> M64)
+thread_d_set = 0; // [0:0.5:250]
+thread_pitch = 1.5; // [0.25:0.05:4]
+// Diametral thread clearance (radial play, split between plate and ring)
+thread_clearance = 0.2; // [0:0.05:1]
+// Axial thread clearance: extra play along Z between plate and ring flanks (split between both), without loosening the radial engagement. Printed flat, the flanks are 30 deg from the bed: layer steps and sag land there. Max = pitch / 2
+thread_z_clearance = 0.25; // [0:0.05:2]
+
+/* [Retaining ring] */
+// Ring height (cannot exceed the thread length)
+ring_h = 3; // [0.5:0.1:20]
+// Radial overlap of the ring on the lens edge (inner diameter = lens_d - 2x)
+ring_overlap = 2; // [0:0.1:10]
+// Manual inner diameter (0 = automatic)
+ring_id_set = 0; // [0:0.05:200]
+ring_slot_w = 3; // [0:0.1:15]
+ring_slot_d = 1.5; // [0:0.1:10]
+// 45 deg chamfer on both ends of the ring thread (removes the elephant foot and the thin start of the thread)
+ring_chamfer = 0.5; // [0:0.1:1.5]
+
+/* [Post mount] */
+// Captive M4 nut in the middle of one side, to attach the plate to a post with an M4 setscrew stud. Removes the recess notch on that side
+post_mount = "bottom"; // [none:No mount, bottom:-Y side (bottom), top:+Y side (top), left:-X side (left), right:+X side (right)]
+// Nut (M4: 7 across flats, 3.2 thick)
+post_nut_af = 7; // [3:0.05:15]
+post_nut_t = 3.2; // [1:0.05:8]
+// Extra clearance of the nut slot
+post_nut_clearance = 0.2; // [0:0.05:1]
+// Distance from the edge to the nut center
+post_nut_depth = 3.5; // [3:0.1:20]
+// Clearance hole for the stud
+post_hole_d = 4.5; // [2:0.05:8]
+// How far the hole continues past the nut (auto-shortened if it would reach the thread)
+post_hole_extra = 0; // [0:0.1:15]
+
+/* [Magnetic bellows recess] */
+// Bellows recess on the front face (thread side)
+recess_front = true;
+// Bellows recess on the back face
+recess_back = true;
+// Side of the recess floor square (0 = from standard)
+recess_sq_set = 0; // [0:0.5:250]
+// 45 deg chamfer of the square corners
+recess_chamfer = 5; // [0:0.5:30]
+recess_corner_r = 1; // [0:0.1:5]
+// Recess depth
+recess_depth = 1.5; // [0.2:0.1:5]
+// Horizontal wall growth from floor to surface (= depth -> 45 deg)
+recess_draft = 1.5; // [0:0.1:5]
+// Pry notches (lobes) to remove the bellows (0 = from standard)
+lobe_w_set = 0; // [0:0.5:60]
+// Distance from center to the lobe end, at the floor (0 = from standard)
+lobe_reach_set = 0; // [0:0.1:150]
+// Notch corner radius (0 = from standard)
+lobe_r_set = 0; // [0:0.1:20]
+lobe_fillet = 2; // [0:0.1:6]
+// Extra notch depth below the recess floor
+lobe_extra_depth = 1; // [0:0.1:5]
+
+/* [Magnets] */
+magnet_enable = true;
+// Magnet diameter (0 = from standard)
+magnet_d_set = 0; // [0:0.1:30]
+// Magnet position (+-x, +-y) (0 = from standard)
+magnet_offset_set = 0; // [0:0.1:100]
+// Through hole between both floors (only with a recess on both faces); otherwise blind from each recessed face. No recess = no magnets
+magnet_through = false;
+magnet_depth = 3; // [0.5:0.1:10]
 
 /* [Plate] */
 // Plate width (0 = automatic from the rods)
@@ -49,7 +147,7 @@ rod_clearance = 0.25; // [0:0.05:2]
 rod_c_set = 0; // [0:0.05:200]
 // Rod seat: the arm pushes the rod into a V on the body side, so it touches two lines along the whole thickness, without play (the plate cannot tilt on the rod).
 // Included angle of the V seat (smaller = stiffer centering, but the arm must open more to snap the rod in)
-rod_v_angle = 120; // [60:1:150]
+rod_v_angle = 100; // [60:1:150]
 // The body face continues this far past the upper V contact before the rod opening
 rod_v_margin = 0.3; // [0:0.05:2]
 
@@ -88,105 +186,6 @@ nut_t = 2.4; // [1:0.05:8]
 nut_clearance = 0; // [0:0.05:1]
 // X distance from rod axis to nut center, inward (0 = from standard)
 nut_x_off_set = 0; // [0:0.1:20]
-
-/* [Magnetic bellows recess] */
-// Bellows recess on the front face (thread side)
-recess_front = true;
-// Bellows recess on the back face
-recess_back = true;
-// Side of the recess floor square (0 = from standard)
-recess_sq_set = 0; // [0:0.5:250]
-// 45 deg chamfer of the square corners
-recess_chamfer = 5; // [0:0.5:30]
-recess_corner_r = 1; // [0:0.1:5]
-// Recess depth
-recess_depth = 1.5; // [0.2:0.1:5]
-// Horizontal wall growth from floor to surface (= depth -> 45 deg)
-recess_draft = 1.5; // [0:0.1:5]
-// Pry notches (lobes) to remove the bellows (0 = from standard)
-lobe_w_set = 0; // [0:0.5:60]
-// Distance from center to the lobe end, at the floor (0 = from standard)
-lobe_reach_set = 0; // [0:0.1:150]
-// Notch corner radius (0 = from standard)
-lobe_r_set = 0; // [0:0.1:20]
-lobe_fillet = 2; // [0:0.1:6]
-// Extra notch depth below the recess floor
-lobe_extra_depth = 1; // [0:0.1:5]
-
-/* [Post mount] */
-// Captive M4 nut in the middle of one side, to attach the plate to a post with an M4 setscrew stud. Removes the recess notch on that side
-post_mount = "none"; // [none:No mount, bottom:-Y side (bottom), top:+Y side (top), left:-X side (left), right:+X side (right)]
-// Nut (M4: 7 across flats, 3.2 thick)
-post_nut_af = 7; // [3:0.05:15]
-post_nut_t = 3.2; // [1:0.05:8]
-// Extra clearance of the nut slot
-post_nut_clearance = 0.2; // [0:0.05:1]
-// Distance from the edge to the nut center
-post_nut_depth = 5; // [3:0.1:20]
-// Clearance hole for the stud
-post_hole_d = 4.5; // [2:0.05:8]
-// How far the hole continues past the nut (auto-shortened if it would reach the thread)
-post_hole_extra = 4; // [0:0.1:15]
-
-/* [Magnets] */
-magnet_enable = true;
-// Magnet diameter (0 = from standard)
-magnet_d_set = 0; // [0:0.1:30]
-// Magnet position (+-x, +-y) (0 = from standard)
-magnet_offset_set = 0; // [0:0.1:100]
-// Through hole between both floors (only with a recess on both faces); otherwise blind from each recessed face. No recess = no magnets
-magnet_through = true;
-magnet_depth = 3; // [0.5:0.1:10]
-
-/* [Lens mount] */
-// thread: lens + retaining ring (section below). qm: quick-mount receptor for lens adapters (parts/quick_mount)
-lens_mount = "thread"; // [thread:Lens + retaining ring thread, qm:QM quick-mount receptor]
-// Quick-mount interface (lib/standards.scad)
-qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys 10 mm plates with 1.5 mm recesses), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates without recess)]
-// The seat face (flange underside) is placed so the lock screw is centered in the plate thickness: on the front recess floor if there is one, otherwise in a round flange pocket (needs plate_t = 10 for QM42 with 1.5 mm recesses)
-// Diametral clearance of the flange pocket (only when the seat is below a face without recess)
-qm_pocket_clearance = 0.6; // [0:0.05:2]
-// Side of the QM lock screw (must differ from the post mount side)
-qm_screw_side = "top"; // [top:+Y side (top), bottom:-Y side (bottom), left:-X side (left), right:+X side (right)]
-// Diameter of the lock screw hole (M4: 4.5 = clearance; smaller for a snugger screw, ~3.3 to thread the screw straight into the plastic)
-qm_screw_hole_d = 4.5; // [2.5:0.05:6]
-// Captive M4 nut for the lock screw: distance from the edge to the nut center (slot open on the front face, like the post mount)
-qm_nut_depth = 5; // [3:0.1:20]
-// Diametral clearance of the Ø42 bore for the adapter spigot (the lock screw pushes the spigot against the opposite wall, so centering does not depend on it)
-qm_bore_clearance = 0.3; // [0:0.01:1]
-
-/* [Lens and thread] */
-// Lens diameter: aperture, thread and retaining ring are derived from it (0 = from standard)
-lens_d_set = 0; // [0:0.05:200]
-// Radial width of the ledge the lens rests on (aperture = lens_d - 2x)
-lens_ledge = 1.5; // [0.2:0.1:10]
-// Manual clear aperture (0 = automatic)
-aperture_d_set = 0; // [0:0.05:200]
-// Height of the cylindrical lip below the seat cone
-lip_h = 0.5; // [0:0.1:5]
-thread_enable = true;
-// Minimum radial margin between lens and nominal thread diameter (thread is rounded up to the next whole mm)
-thread_margin = 2; // [0.5:0.1:10]
-// Manual nominal thread diameter (0 = automatic: lens_d=60 -> M64)
-thread_d_set = 0; // [0:0.5:250]
-thread_pitch = 1.5; // [0.25:0.05:4]
-// Diametral thread clearance (radial play, split between plate and ring)
-thread_clearance = 0.2; // [0:0.05:1]
-// Axial thread clearance: extra play along Z between plate and ring flanks (split between both), without loosening the radial engagement. Printed flat, the flanks are 30 deg from the bed: layer steps and sag land there. Max = pitch / 2
-thread_z_clearance = 0.25; // [0:0.05:2]
-
-/* [Retaining ring] */
-// Ring height (cannot exceed the thread length)
-ring_h = 3; // [0.5:0.1:20]
-// Radial overlap of the ring on the lens edge (inner diameter = lens_d - 2x)
-ring_overlap = 2; // [0:0.1:10]
-// Manual inner diameter (0 = automatic)
-ring_id_set = 0; // [0:0.05:200]
-ring_slot_w = 3; // [0:0.1:15]
-ring_slot_d = 1.5; // [0:0.1:10]
-// 45 deg chamfer on both ends of the ring thread (removes the elephant foot and the thin start of the thread)
-ring_chamfer = 0.5; // [0:0.1:1.5]
-
 
 /* [Quality] */
 $fn = 96;

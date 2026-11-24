@@ -22,10 +22,6 @@
 
 use <../../lib/optsys.scad>
 
-/* [Interface] */
-// Quick-mount interface
-qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys plates), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates)]
-
 /* [Lens thread] */
 // female: lens screws in; male: the adapter screws into a bellows / helicoid
 mode = "female"; // [female:Female (lens screws in), male:Male (screws into a bellows / helicoid)]
@@ -45,6 +41,10 @@ hub_wall = 2.5; // [0:0.1:8]
 bore_d_set = 0; // [0:0.1:60]
 // 45 deg entry chamfer of the thread
 entry_chamfer = 0.6; // [0:0.1:2]
+
+/* [Interface] */
+// Quick-mount interface
+qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys plates), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates)]
 
 /* [Output] */
 // spigot_down: as the tested adapter (flange underside bridged); lens_down: lens face on the bed, flange underside printed as a top surface
