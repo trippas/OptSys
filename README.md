@@ -11,7 +11,7 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 | Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 100 | Lens mount with retaining-ring thread or QM quick-mount receptor, magnetic bellows recess, compliant rod clamps with V rod seats, engraved label, optional post mount |
 | QM lens adapter | [`parts/quick_mount`](parts/quick_mount/README.md) | QM42, QM42-EPI | Quick-mount adapter for enlarger lenses (L39), objectives (RMS, M25, ...) or M42 / T2 bellows, locked in a QM receptor plate by one screw |
 | Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
-| Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads | Rod seat test (V seats vs round seat vs tight holes) and internal thread test rings (L39 enlarger, RMS, M25 objectives) |
+| Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads, QM42 | Rod seat test (V seats vs round seat vs tight holes), internal thread test rings (L39 enlarger, RMS, M25 objectives) and bayonet quick-mount test (receptors, adapter, TPU spring rings) |
 
 ## Interface standards
 
