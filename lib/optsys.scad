@@ -12,4 +12,5 @@ include <gears.scad>
 include <extrusions.scad>
 include <rod_seats.scad>
 include <quickmount.scad>
+include <bayonet.scad>
 include <annotations.scad>

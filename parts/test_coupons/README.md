@@ -45,3 +45,32 @@ Also available in `thread`: `M39x1`, `M42x1`, `T2` (M42 × 0.75), `M27x0.75` (Ze
 Threads use the OptSys 60° profile (`lib/threads.scad`); lens threads are 55° Whitworth, which the clearance absorbs. Both ends have a 45° entry chamfer.
 
 **Print:** flat, fine layers (0.08 mm works well for L39); RMS (0.706 mm pitch) is at the limit of FDM, so this test also tells whether printed objective threads are usable or a metal adapter is needed. `which` outputs a single ring (1 = first clearance); `0` outputs all of them in a grid.
+
+## Bayonet quick mount test (`bayonet_test.scad`)
+
+Experimental push-and-turn mount for the QM42 spigot (Ø42), to try before changing the plates and the adapters. Geometry in [`lib/bayonet.scad`](../../lib/bayonet.scad).
+
+![Bayonet test, locked, quarter section](../../docs/bayonet_test.png)
+
+How it works: the adapter has 3 lugs at the end of its spigot. Push it into the receptor through the 3 notches, turn it 45° clockwise (seen from the front) under the ledge, and let go: a printed TPU spring ring between the flange and the seat face pushes the adapter forward and the lugs drop into a shallow pocket at the end of the turn (click). To release, push in and turn back, like a BNC connector.
+
+- The lug and ledge faces are 45° cones: they print without supports and, pulled together by the spring, center the adapter. The 3 lugs set position and tilt; the flange does not touch the seat.
+- The bore clearance (0.4, as tested with QM42) no longer sets the centering.
+- Clocking: 3 positions (one per lug), not free like QM42.
+
+| Part | Count | Variants | Print |
+|---|---|---|---|
+| Receptor disc | one per value of `detents` (default 0.2, 0.35, 0.5) | detent pocket depth, engraved on the seat face | PLA, seat face up, 0.08–0.12 mm layers |
+| Adapter | 1 | lugs + flange + a fluted grip ring standing in for the lens (Ø48 × 8, about an El-Nikkor body; `grip_d`, `grip_h`) | PLA, grip down |
+| Spring ring | one per value of `spring_t` (default 0.5, 0.7, 0.9) | lip thickness; 1, 2 or 3 small notches in the bore | TPU 95A, base ring down |
+
+**Test:**
+1. Slip a spring ring onto the spigot, against the flange (lip toward the lugs).
+2. Push the adapter into a receptor (lugs in the notches), turn clockwise until it clicks, let go.
+3. Check: is the click clear, does it turn back without pushing (it should not), play when locked (wiggle, rock), centering (repeat and compare against a mark), how hard the push and the turn are.
+4. Try every spring with every receptor; cycle the best pair many times and look for wear or a weaker click.
+5. Report the detent depth and lip thickness you like. Too stiff: thinner lip or lower `preload`. Too soft or loose: thicker lip.
+
+Rough force estimate (TPU 95A, E ≈ 25–50 MPa, very uncertain): lip 0.7 ≈ 10–30 N locked, about twice that pushed in to turn. Lip force goes with the cube of the thickness.
+
+Sizes: lug tips Ø45.6 and groove Ø46.2 with the defaults (`lug_depth` 1.8). The same values are the `BQ42` interface of the plates and adapters (`lens_mount = bayonet`, `qm = BQ42`); it fits the 70 and 100 mm plates, and the 60 mm one only with Ø4 magnets and no front recess. The receptor is 7 mm thick, the web of a 10 mm plate with 1.5 mm recesses.
