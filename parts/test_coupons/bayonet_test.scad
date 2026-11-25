@@ -78,8 +78,8 @@ receptor_t = 7; // [5:0.5:12]
 flange_d = 46; // [44:0.5:60]
 // Adapter flange thickness
 flange_t = 3; // [1.5:0.5:6]
-// Grip ring diameter (stands in for the lens)
-grip_d = 54; // [46:1:80]
+// Grip ring diameter (stands in for the lens; 48 = about the widest El-Nikkor body). At least flange_d: it is printed grip down
+grip_d = 48; // [46:1:80]
 // Grip ring height
 grip_h = 8; // [3:0.5:20]
 // Adapter clear bore
@@ -119,6 +119,7 @@ assert(bay_floor_depth(S, max(detents)) <= receptor_t - 1.2,
        str("Groove floor too deep for receptor_t (needs ", bay_floor_depth(S, max(detents)) + 1.2, " mm)"));
 assert(receptor_d >= 2 * bay_groove_r(S) + 2 * text_size + 6, "receptor_d too small for the groove and the label");
 assert(flange_d / 2 > bay_rb(S) + entry_chamfer + 0.5, "flange_d must cover the bore chamfer");
+assert(grip_d >= flange_d, "grip_d must be at least flange_d (the adapter prints grip down)");
 assert(adapter_bore < 42 - 3, "adapter_bore leaves less than 1.5 mm of spigot wall");
 
 echo(str("Bayonet: ", lugs, " lugs x ", lug_a, " deg, ", turn, " deg turn; bore Ø", 2 * bay_rb(S),

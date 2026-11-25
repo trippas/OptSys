@@ -3,14 +3,17 @@
 // Cage systems: [name, rod spacing (center to center), rod diameter,
 //                series thread name, typical plate width]
 // The 16/30/60 mm entries follow the Thorlabs cage standards (rod spacing,
-// rod size and SM thread series); "50mm" and "100mm" are OptSys formats
-// ("50mm" comes from the user's epi-illuminator cage, with the QM42-EPI quick
-// mount as its series interface).
+// rod size and SM thread series); "50mm", "70mm" and "100mm" are OptSys
+// formats ("50mm" comes from the user's epi-illuminator cage, with the
+// QM42-EPI quick mount as its series interface; "70mm" is the 60 mm layout
+// grown 5 mm in radius, with room for the BQ42 bayonet, its spring ring and
+// the bellows recess around lenses up to ~Ø55).
 OPTSYS_CAGES = [
     ["16mm",  16, 4, "SM05", 25],
     ["30mm",  30, 6, "SM1",  41],
     ["50mm",  50, 6, "QM42-EPI", 63],
     ["60mm",  60, 6, "SM2",  71.1],
+    ["70mm",  70, 6, "QM42", 83],
     ["100mm", 85, 8, "M64x1.5", 100],
 ];
 
@@ -72,6 +75,24 @@ OPTSYS_QUICKMOUNTS = [
     ["QM42",     42,  7, 46, 3, 3.5, 1.9, 3.7, 4.9, 1.7, "M4"],
     ["QM42-EPI", 42, 10, 50, 3, 5,   3.4, 5.2, 6.4, 1.7, "M4"],
 ];
+
+// Bayonet quick mounts (BQ, experimental, see lib/bayonet.scad): the same
+// Ø42 spigot with n lugs, pushed in and turned clockwise (seen from the
+// front) under a ledge; a printed TPU spring ring pulls the 45 deg lug faces
+// onto the ledge (centering) and drops them into a detent pocket (click).
+//   BQ42  values of the bayonet test coupon (parts/test_coupons/bayonet_test).
+//         Lug tips Ø45.6, groove Ø46.2: fits the 60 mm magnets (from r 23.9
+//         with Ø4 magnets) and the 70 mm plates.
+// [name, spigot d, bore clearance, lugs, lug width (deg), lug depth, lug
+//  height, turn (deg), ledge, entry chamfer, flange-to-seat gap, radial,
+//  axial, floor and arc clearances, flange d, flange t]
+OPTSYS_BAYONETS = [
+    ["BQ42", 42, 0.4, 3, 35, 1.8, 2.6, 45, 1.0, 0.5, 1.8, 0.3, 0.15, 0.25, 0.3, 46, 3],
+];
+function _bq(name) = OPTSYS_BAYONETS[search([str(name)], OPTSYS_BAYONETS)[0]];
+function is_bayonet(name) = search([str(name)], OPTSYS_BAYONETS)[0] != [];
+function bq_flange_d(name) = _bq(name)[15];
+function bq_flange_t(name) = _bq(name)[16];
 
 function _qm(name) = OPTSYS_QUICKMOUNTS[search([str(name)], OPTSYS_QUICKMOUNTS)[0]];
 function qm_d(name)            = _qm(name)[1];

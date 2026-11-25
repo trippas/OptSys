@@ -61,7 +61,7 @@ How it works: the adapter has 3 lugs at the end of its spigot. Push it into the 
 | Part | Count | Variants | Print |
 |---|---|---|---|
 | Receptor disc | one per value of `detents` (default 0.2, 0.35, 0.5) | detent pocket depth, engraved on the seat face | PLA, seat face up, 0.08–0.12 mm layers |
-| Adapter | 1 | lugs + flange + a fluted grip ring standing in for the lens | PLA, grip down |
+| Adapter | 1 | lugs + flange + a fluted grip ring standing in for the lens (Ø48 × 8, about an El-Nikkor body; `grip_d`, `grip_h`) | PLA, grip down |
 | Spring ring | one per value of `spring_t` (default 0.5, 0.7, 0.9) | lip thickness; 1, 2 or 3 small notches in the bore | TPU 95A, base ring down |
 
 **Test:**
@@ -73,4 +73,4 @@ How it works: the adapter has 3 lugs at the end of its spigot. Push it into the 
 
 Rough force estimate (TPU 95A, E ≈ 25–50 MPa, very uncertain): lip 0.7 ≈ 10–30 N locked, about twice that pushed in to turn. Lip force goes with the cube of the thickness.
 
-Sizes: lug tips Ø45.6 and groove Ø46.2 with the defaults (`lug_depth` 1.8), which fit inside the bellows magnets of the 60 mm plates (from r 23.4). The receptor is 7 mm thick, the web of a 10 mm plate with 1.5 mm recesses.
+Sizes: lug tips Ø45.6 and groove Ø46.2 with the defaults (`lug_depth` 1.8). The same values are the `BQ42` interface of the plates and adapters (`lens_mount = bayonet`, `qm = BQ42`); it fits the 70 and 100 mm plates, and the 60 mm one only with Ø4 magnets and no front recess. The receptor is 7 mm thick, the web of a 10 mm plate with 1.5 mm recesses.

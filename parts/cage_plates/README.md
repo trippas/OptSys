@@ -13,8 +13,9 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
 - **Three standards** from one file:
   - **100 mm**: 100 × 100 mm plate, Ø8 rods at 85 mm spacing, Ø60 lens (M64×1.5 thread).
   - **60 mm**: 73 × 73 mm plate, Ø6 rods at 60 mm spacing (same rod size and spacing as the Thorlabs 60 mm cage system), Ø38.1 (1.5") lens (M43×1.5 thread). Without the bellows recess it takes a Ø50.8 (2") lens.
+  - **70 mm** (OptSys): 83 × 83 mm plate, Ø6 rods at 70 mm spacing: the 60 mm layout grown 5 mm in radius (57 mm recess floor, Ø5 magnets at ±23.3). Ø48 lens (M52×1.5 thread), or a QM42 / BQ42 bayonet receptor with room for the bayonet spring ring inside the bellows recess.
   - **50 mm**: 63 × 63 mm plate, Ø6 rods at 50 mm spacing (the user's epi-illuminator cage), Ø25.4 (1") lens (M30×1.5 thread), or a QM42-EPI receptor.
-- **Lens mount** (`lens_mount`): `thread` (lens + retaining ring) or `qm`, a receptor for QM quick-mount adapters: Ø42 bore with `qm_bore_clearance` (diametral, default 0.3), M4 lock screw with a captive nut on the side you choose. The seat face is placed so the lock screw is centered in the plate thickness: with `QM42` (Ø46 flange) on a 10 mm plate it is the front recess floor (1.5 mm) of the 60 and 100 mm plates, or a Ø46.6 × 1.5 flange pocket when the front face has no recess.
+- **Lens mount** (`lens_mount`): `thread` (lens + retaining ring), `bayonet` (BQ42, experimental: push-and-turn receptor, see below) or `qm`, a receptor for QM quick-mount adapters: Ø42 bore with `qm_bore_clearance` (diametral, default 0.3), M4 lock screw with a captive nut on the side you choose. The seat face is placed so the lock screw is centered in the plate thickness: with `QM42` (Ø46 flange) on a 10 mm plate it is the front recess floor (1.5 mm) of the 60 and 100 mm plates, or a Ø46.6 × 1.5 flange pocket when the front face has no recess.
 - **V rod seats**: the clamp arm pushes the rod into a V on the body side, so it touches two lines along the whole thickness and the plate cannot tilt on the rod. `rod_v_angle` (default 100°) trades centering stiffness for snap-in effort; the console prints the snap interference. (The earlier round seat with clearance was dropped: the rod touched it on a single line and the plate could rock around it.)
 - **Thread clearances**: `thread_clearance` (diametral, 0.2) plus `thread_z_clearance` (axial, 0.25), both split between plate and ring: about 0.48 mm of axial play while keeping the full radial engagement. Printed flat, the 60° thread flanks are only 30° from the bed, so layer steps and sag land on them: radial clearance alone opens the flanks by half its value and loosens the thread. The ring has 45° chamfers on both ends (`ring_chamfer`) against the elephant foot.
 - **Lens-driven geometry**: set the lens diameter and the aperture, seat cone, internal thread and retaining ring follow automatically.
@@ -25,6 +26,12 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
 - **Retaining ring** generated to match the thread.
 - **Interference checks**: when a parameter change makes features collide, OpenSCAD stops with a message saying what to adjust.
 
+### Bayonet receptor (`lens_mount = bayonet`, experimental)
+
+Ø42.4 bore with 3 notches, a groove under a 45° ledge and a detent pocket at the end of a 45° clockwise turn ([`lib/bayonet.scad`](../../lib/bayonet.scad), interface `BQ42` in `lib/standards.scad`, the same values as the [bayonet test coupon](../test_coupons/README.md)). The seat face is the front recess floor (or the front face); the adapter flange stays 1.8 mm above it on a printed TPU spring ring ([`parts/quick_mount`](../quick_mount/README.md), `part = spring`). `bq_detent` sets the pocket depth (0.35 by default: use the one you chose with the coupon). No screw or nut.
+
+Fits the 70 and 100 mm plates with recesses. On the 60 mm plate the groove (Ø46.2) needs Ø4 magnets and the spring ring (Ø47.1) does not fit on the 47 mm recess floor: disable `recess_front` there.
+
 ## Usage
 
 1. Open `lens_cage_plate.scad` from this folder. It loads the shared library from `../../lib`, so keep the repository structure intact; `lens_cage_plate.json` must stay next to it.
@@ -32,6 +39,7 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
    - `50 mm standard (Ø6 rods at 50 mm, 1 in lens)`: M30 thread and retaining ring, no recess
    - `50 mm QM42 receptor, V rod seats`: QM42-EPI receptor (the user's EPI plates), no recess
    - `60 mm QM42 receptor, V rod seats`: recess on both faces, Ø4 blind magnets, M4 holes Ø4.2
+   - `70 mm QM42 receptor, V rod seats` / `70 mm BQ42 bayonet receptor, V rod seats`: recess on both faces, Ø5 blind magnets
    - `100 mm QM42 receptor, V rod seats`: recess on both faces
 
    All with the post mount on the bottom side. For a threaded 60 or 100 mm plate, pick the standard and set `lens_mount = thread`.
@@ -51,7 +59,7 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
 - Clamp screws: 4 × M3 screw + M3 nut (length printed in the console, M3 × 10 or 12).
 - Post mount: 1 × M4 nut + M4 setscrew stud (length printed in the console).
 - QM receptor: 1 × M4 nut + M4 setscrew (length printed in the console).
-- Magnets: Ø6 (100 mm standard) or Ø5 (60 mm standard), when the recess is enabled.
+- Magnets: Ø6 (100 mm standard) or Ø5 (60 and 70 mm standards), when the recess is enabled.
 
 ## Files
 

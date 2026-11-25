@@ -40,6 +40,22 @@
             "thread_l": 5,
             "thread_z_clearance": 0.2
         },
+        "L39 enlarger lens (BQ42 bayonet)": {
+            "hub_h": 0,
+            "mode": "female",
+            "part": "adapter",
+            "qm": "BQ42",
+            "thread": "L39",
+            "thread_clearance": 0.15,
+            "thread_l": 5,
+            "thread_z_clearance": 0.2
+        },
+        "BQ42 spring ring (TPU)": {
+            "part": "spring",
+            "qm": "BQ42",
+            "spring_preload": 0.3,
+            "spring_t": 0.7
+        },
         "m39x1": {
             "$fn": 144,
             "bore_d_set": 0,

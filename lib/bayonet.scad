@@ -43,6 +43,12 @@ function bayonet_spec(d = 42, bore_clearance = 0.4, n = 3, lug_a = 35, lug_depth
     [d, bore_clearance, n, lug_a, lug_depth, lug_h, turn, ledge_t, entry_chamfer, gap,
      radial_clearance, axial_clearance, floor_clearance, arc_clearance];
 
+// Spec of a named bayonet from OPTSYS_BAYONETS (lib/standards.scad).
+function bayonet_named(name) = let(b = _bq(name))
+    bayonet_spec(d = b[1], bore_clearance = b[2], n = b[3], lug_a = b[4], lug_depth = b[5], lug_h = b[6],
+                 turn = b[7], ledge_t = b[8], entry_chamfer = b[9], gap = b[10], radial_clearance = b[11],
+                 axial_clearance = b[12], floor_clearance = b[13], arc_clearance = b[14]);
+
 function bay_d(s)                = s[0];
 function bay_bore_clearance(s)   = s[1];
 function bay_n(s)                = s[2];

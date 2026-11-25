@@ -8,8 +8,8 @@ A family of parametric, 3D-printable optomechanical parts written in OpenSCAD, o
 
 | Part | Folder | Standards | Description |
 |---|---|---|---|
-| Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 100 | Lens mount with retaining-ring thread or QM quick-mount receptor, magnetic bellows recess, compliant rod clamps with V rod seats, engraved label, optional post mount |
-| QM lens adapter | [`parts/quick_mount`](parts/quick_mount/README.md) | QM42, QM42-EPI | Quick-mount adapter for enlarger lenses (L39), objectives (RMS, M25, ...) or M42 / T2 bellows, locked in a QM receptor plate by one screw |
+| Lens cage plate | [`parts/cage_plates`](parts/cage_plates/README.md) | OptSys 50, 60 mm, OptSys 70, OptSys 100 | Lens mount with retaining-ring thread, QM quick-mount receptor or BQ bayonet receptor (experimental), magnetic bellows recess, compliant rod clamps with V rod seats, engraved label, optional post mount |
+| QM lens adapter | [`parts/quick_mount`](parts/quick_mount/README.md) | QM42, QM42-EPI, BQ42 | Quick-mount adapter for enlarger lenses (L39), objectives (RMS, M25, ...) or M42 / T2 bellows, locked in a QM receptor plate by one screw, or a bayonet version (push and turn) with its TPU spring ring |
 | Rail carriage | [`parts/rails`](parts/rails/README.md) | 2020 V-slot | Rack-and-pinion carriage on PTFE tubes, XY (stackable) and Z versions, with pinion, knob and rack |
 | Test coupons | [`parts/test_coupons`](parts/test_coupons/README.md) | Ø6 / Ø8 rods, lens threads, QM42 | Rod seat test (V seats vs round seat vs tight holes), internal thread test rings (L39 enlarger, RMS, M25 objectives) and bayonet quick-mount test (receptors, adapter, TPU spring rings) |
 
@@ -23,6 +23,7 @@ Defined once in [`lib/standards.scad`](lib/standards.scad) and used by every par
 | `30mm` | 30 mm | Ø6 | SM1 (1.035"-40) | 41 mm |
 | `50mm` (OptSys) | 50 mm | Ø6 | QM42-EPI quick mount | 63 mm |
 | `60mm` | 60 mm | Ø6 | SM2 (2.035"-40) | 71.1 mm |
+| `70mm` (OptSys) | 70 mm | Ø6 | QM42 / BQ42 quick mounts | 83 mm |
 | `100mm` (OptSys) | 85 mm | Ø8 | M64×1.5 | 100 mm |
 
 The 16/30/60 mm rows match the Thorlabs cage standards. Extrusions (`OPTSYS_EXTRUSIONS`, currently `2020V` = 2020 V-slot) and ball bearings (`OPTSYS_BEARINGS`, MR84ZZ to 608ZZ) are defined there too. Metric posts are Ø12.7 mm with M4 on top and M6 at the bottom; metric breadboards use M6 holes on a 25 mm grid.

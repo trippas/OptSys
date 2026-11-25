@@ -8,7 +8,9 @@
 //
 //  The interface (spigot, groove, flange) comes from OPTSYS_QUICKMOUNTS
 //  in lib/standards.scad: QM42 for OptSys plates (10 mm with 1.5 mm
-//  bellows recesses), QM42-EPI for the user's tested EPI plates.
+//  bellows recesses), QM42-EPI for the user's tested EPI plates, BQ42 for
+//  the bayonet receptor (experimental: push in, turn 45 deg clockwise; it
+//  rides on a printed TPU spring ring, part = spring).
 //    female - the lens screws into the adapter (enlarger lenses: L39;
 //             objectives: RMS, M25, ...). The lens flange or objective
 //             shoulder rests on the top face.
@@ -16,11 +18,15 @@
 //             or helicoid, T2, ...).
 //
 //  Coordinates (assembly): optical axis = Z, seat plane (flange
-//  underside, = receptor seat face) at z = 0, lens side toward +Z, spigot
+//  underside; = receptor seat face for QM, gap above it for BQ) at z = 0, lens side toward +Z, spigot
 //  toward -Z. The output is placed in print orientation.
 // =====================================================================
 
 use <../../lib/optsys.scad>
+
+/* [Output] */
+// adapter, or the TPU spring ring of a bayonet (BQ) adapter
+part = "adapter"; // [adapter:Adapter, spring:Bayonet spring ring (TPU, BQ only)]
 
 /* [Lens thread] */
 // female: lens screws in; male: the adapter screws into a bellows / helicoid
@@ -44,9 +50,15 @@ entry_chamfer = 0.6; // [0:0.1:2]
 
 /* [Interface] */
 // Quick-mount interface
-qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys plates), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates)]
+qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys plates), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates), BQ42:BQ42 - bayonet, Ø42 spigot with 3 lugs, Ø46 flange (experimental)]
 
-/* [Output] */
+/* [Bayonet spring ring (BQ only)] */
+// Lip thickness of the TPU spring ring (sets the force; choose it with parts/test_coupons/bayonet_test)
+spring_t = 0.7; // [0.3:0.05:1.5]
+// Spring compression when locked
+spring_preload = 0.3; // [0.1:0.05:1]
+
+/* [Print] */
 // spigot_down: as the tested adapter (flange underside bridged); lens_down: lens face on the bed, flange underside printed as a top surface
 orientation = "spigot_down"; // [spigot_down:Spigot down (as tested), lens_down:Lens face down]
 
@@ -63,11 +75,15 @@ female = mode == "female";
 d  = thread_spec_d(thread);
 P  = thread_spec_pitch(thread);
 c  = thread_clearance;
-R  = qm_d(qm) / 2;
-F  = qm_flange_d(qm) / 2;
-ft = qm_flange_t(qm);
-l  = qm_l(qm);
-gd = qm_groove_depth(qm);
+bq = is_bayonet(qm);
+S  = bq ? bayonet_named(qm) : undef;
+R  = bq ? bay_R(S) : qm_d(qm) / 2;
+F  = (bq ? bq_flange_d(qm) : qm_flange_d(qm)) / 2;
+ft = bq ? bq_flange_t(qm) : qm_flange_t(qm);
+l  = bq ? bay_spigot_l(S) : qm_l(qm);
+gd = bq ? 0 : qm_groove_depth(qm);
+seat_off = bq ? bay_gap(S) : 0;          // flange underside above the receptor seat face
+max_bore = bq ? 2 * R - 2 * 1.6 : qm_max_bore(qm);
 min_wall = 1;
 
 // female thread radii (enlarged by the clearance) / male (reduced)
@@ -90,13 +106,14 @@ hub_eff = female ? (no_hub ? 0 : max(hub_h, f_bottom_min + tl - ft)) : hub_h;
 z_top   = female ? ft + hub_eff : ft + hub_h + tl;
 z_thr   = female ? z_top - tl : ft + hub_h;           // thread start
 hub_od  = female ? min(2 * F, 2 * f_rmaj + 2 * hub_wall) : 0;
-bore_auto = female ? min(2 * f_rmin - 1, qm_max_bore(qm)) : min(2 * m_rmin - 3, qm_max_bore(qm));
+bore_auto = female ? min(2 * f_rmin - 1, max_bore) : min(2 * m_rmin - 3, max_bore);
 bore_d  = bore_d_set > 0 ? bore_d_set : bore_auto;
 
 assert(f_bottom_min < 1e8, str("The ", thread, " thread (Ø", d, ") is too large for the ", qm, " flange (Ø", 2 * F, ")"));
 assert(female || m_rmaj <= F, str("The male thread is larger than the flange"));
 assert(bore_d <= (female ? 2 * f_rmin : 2 * m_rmin - 2), "bore_d_set cuts into the thread");
-assert(bore_d <= qm_max_bore(qm), str("bore_d_set too large for the spigot walls (max Ø", qm_max_bore(qm), ")"));
+assert(bore_d <= max_bore, str("bore_d_set too large for the spigot walls (max Ø", max_bore, ")"));
+assert(bq || part != "spring", "The spring ring is only for bayonet (BQ) adapters: set qm = BQ42");
 assert(thread_l >= 2 * P, "thread_l too short: at least two turns");
 assert(thread_z_clearance <= P / 2 + 1e-9, str("thread_z_clearance is larger than half the pitch (", P / 2, ")"));
 assert(!no_hub || hub_h == 0, "hub_wall = 0 (no hub) cannot raise the lens register: set hub_h = 0 or give the hub a wall");
@@ -105,14 +122,19 @@ if (no_hub && tl < thread_l) echo(str("Note: no hub, the thread is shortened to 
 
 echo(str("QM adapter ", qm, " ", mode, " ", thread, " (Ø", d, " x ", P, ", clearance ", c, " radial + ", thread_z_clearance, " axial: play vs. a metal thread ",
          round(100 * (thread_z_clearance + c * tan(30))) / 100, " mm axial, engagement ", round(100 * ((d - thread_minor_d(d, P)) / 2 - c / 2)) / 100, " of ", round(100 * (d - thread_minor_d(d, P)) / 2) / 100, " mm radial): ",
-         female ? str("lens register (top face) ", z_top, " mm above the receptor seat face") :
-                  str("thread from ", z_thr, " to ", z_top, " mm above the receptor seat face"),
+         female ? str("lens register (top face) ", z_top + seat_off, " mm above the receptor seat face") :
+                  str("thread from ", z_thr + seat_off, " to ", z_top + seat_off, " mm above the receptor seat face"),
          ", clear bore Ø", bore_d, female && hub_eff > hub_h ? str(" (hub raised to ", hub_eff, " mm for the thread)") : ""));
 
 module adapter() {
     difference() {
         union() {
-            qm_spigot_flange(qm);
+            if (bq) {
+                translate([0, 0, -l]) cylinder(r = R, h = l + eps);
+                rotate_extrude(convexity = 4) polygon([[0, 0], [F - 0.4, 0], [F, 0.4], [F, ft - 0.4], [F - 0.4, ft], [0, ft]]);
+                bayonet_lugs(S);
+            }
+            else qm_spigot_flange(qm);
             if (female && z_top > ft) translate([0, 0, ft - eps]) cylinder(d = hub_od, h = z_top - ft + eps);
             if (!female) {
                 if (hub_h > 0) translate([0, 0, ft - eps]) cylinder(r = m_rmin, h = hub_h + 2 * eps);
@@ -143,6 +165,11 @@ module adapter() {
     }
 }
 
-color("SteelBlue") render(convexity = 8)
+if (bq) echo(str("Bayonet ", qm, ": push in, turn ", bay_turn(S), " deg clockwise (seen from the front) until it clicks; spring ring: lip ",
+                 spring_t, " mm, Ø", bayonet_spring_od(S, spring_preload), ", print in TPU, base ring down (part = spring)"));
+
+if (part == "spring")
+    color("DimGray") render(convexity = 6) translate([0, 0, bayonet_spring_h(S, spring_preload)]) mirror([0, 0, 1]) bayonet_spring(S, spring_t, spring_preload);
+else color("SteelBlue") render(convexity = 8)
     if (orientation == "lens_down") translate([0, 0, z_top]) mirror([0, 0, 1]) adapter();
     else translate([0, 0, l]) adapter();
