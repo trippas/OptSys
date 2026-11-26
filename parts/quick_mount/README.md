@@ -63,6 +63,6 @@ Receptor options (section *Lens mount*): `qm_bore_clearance` (diametral clearanc
 
 ## Bayonet adapters (`qm = BQ42`, experimental)
 
-Same Ø42 spigot and Ø46 × 3 flange, with 3 lugs at the end of the spigot (45° faces) instead of the lock-screw groove. Push the adapter into a bayonet receptor (`lens_cage_plate` with `lens_mount = bayonet`), turn it 45° clockwise (seen from the front) until it clicks; push in and turn back to release. It rides 1.8 mm above the seat face on a TPU spring ring: print one per adapter with `part = spring` (`spring_t` = lip thickness, choose it with `parts/test_coupons/bayonet_test`), base ring down, and slip it onto the spigot against the flange.
+Same Ø42 spigot and Ø46 × 3 flange, with 3 lugs at the end of the spigot (45° faces) instead of the lock-screw groove. Push the adapter into a bayonet receptor (`lens_cage_plate` with `lens_mount = bayonet`), turn it 45° clockwise (seen from the front) until it clicks; push in and turn back to release. It rides 1.8 mm above the seat face on a TPU spring ring: print one per adapter with `part = spring` (defaults = the tested ring: lip `spring_t` 0.9, base `spring_base_h` 0.7, `spring_preload` 0.6), base ring down, and slip it onto the spigot against the flange.
 
 Without the groove, female threads can go down into the spigot: an L39 lens rests on the flange top (register 4.8 mm above the receptor seat face). Clocking: 3 positions (one per lug). Presets: `L39 enlarger lens (BQ42 bayonet)`, `BQ42 spring ring (TPU)`.

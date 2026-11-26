@@ -53,8 +53,9 @@
         "BQ42 spring ring (TPU)": {
             "part": "spring",
             "qm": "BQ42",
-            "spring_preload": 0.3,
-            "spring_t": 0.7
+            "spring_base_h": 0.7,
+            "spring_preload": 0.6,
+            "spring_t": 0.9
         },
         "m39x1": {
             "$fn": 144,
