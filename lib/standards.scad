@@ -81,6 +81,8 @@ OPTSYS_QUICKMOUNTS = [
 // front) under a ledge; a printed TPU spring ring pulls the 45 deg lug faces
 // onto the ledge (centering) and drops them into a detent pocket (click).
 //   BQ42  values of the bayonet test coupon (parts/test_coupons/bayonet_test).
+//         Tested by the user (26/11): detent 0.5 and a TPU spring ring with a
+//         0.9 lip, 0.7 base and 0.6 preload (the plate and adapter defaults).
 //         Lug tips Ø45.6, groove Ø46.2: fits the 60 mm magnets (from r 23.9
 //         with Ø4 magnets) and the 70 mm plates.
 // [name, spigot d, bore clearance, lugs, lug width (deg), lug depth, lug

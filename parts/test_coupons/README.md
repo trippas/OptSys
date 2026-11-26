@@ -69,7 +69,7 @@ How it works: the adapter has 3 lugs at the end of its spigot. Push it into the 
 2. Push the adapter into a receptor (lugs in the notches), turn clockwise until it clicks, let go.
 3. Check: is the click clear, does it turn back without pushing (it should not), play when locked (wiggle, rock), centering (repeat and compare against a mark), how hard the push and the turn are.
 4. Try every spring with every receptor; cycle the best pair many times and look for wear or a weaker click.
-5. Report the detent depth and lip thickness you like. Too stiff: thinner lip or lower `preload`. Too soft or loose: thicker lip.
+5. Report the detent depth and lip thickness you like. (Tested 26/11: detent 0.5 with the 0.9 lip, 0.7 base and 0.6 preload; these are now the defaults of the plates and adapters.) Too stiff: thinner lip or lower `preload`. Too soft or loose: thicker lip.
 
 Rough force estimate (TPU 95A, E ≈ 25–50 MPa, very uncertain): lip 0.7 ≈ 10–30 N locked, about twice that pushed in to turn. Lip force goes with the cube of the thickness.
 

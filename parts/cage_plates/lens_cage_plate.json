@@ -144,7 +144,7 @@
             "aperture_d_set": 0,
             "arm_wall": 3.375,
             "bq": "BQ42",
-            "bq_detent": 0.35,
+            "bq_detent": 0.5,
             "hinge_y_set": 19.5,
             "lens_d_set": 48,
             "lens_mount": "bayonet",

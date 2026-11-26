@@ -53,10 +53,12 @@ entry_chamfer = 0.6; // [0:0.1:2]
 qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys plates), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates), BQ42:BQ42 - bayonet, Ø42 spigot with 3 lugs, Ø46 flange (experimental)]
 
 /* [Bayonet spring ring (BQ only)] */
-// Lip thickness of the TPU spring ring (sets the force; choose it with parts/test_coupons/bayonet_test)
-spring_t = 0.7; // [0.3:0.05:1.5]
-// Spring compression when locked
-spring_preload = 0.3; // [0.1:0.05:1]
+// Lip thickness of the TPU spring ring (sets the force; 0.9 = tested with parts/test_coupons/bayonet_test)
+spring_t = 0.9; // [0.3:0.05:1.5]
+// Spring compression when locked (0.6 tested)
+spring_preload = 0.6; // [0.1:0.05:1]
+// Height of the spring base ring, under the flange (0.7 tested)
+spring_base_h = 0.7; // [0.4:0.1:2]
 
 /* [Print] */
 // spigot_down: as the tested adapter (flange underside bridged); lens_down: lens face on the bed, flange underside printed as a top surface
@@ -166,10 +168,10 @@ module adapter() {
 }
 
 if (bq) echo(str("Bayonet ", qm, ": push in, turn ", bay_turn(S), " deg clockwise (seen from the front) until it clicks; spring ring: lip ",
-                 spring_t, " mm, Ø", bayonet_spring_od(S, spring_preload), ", print in TPU, base ring down (part = spring)"));
+                 spring_t, " mm, Ø", bayonet_spring_od(S, spring_preload, spring_base_h), ", print in TPU, base ring down (part = spring)"));
 
 if (part == "spring")
-    color("DimGray") render(convexity = 6) translate([0, 0, bayonet_spring_h(S, spring_preload)]) mirror([0, 0, 1]) bayonet_spring(S, spring_t, spring_preload);
+    color("DimGray") render(convexity = 6) translate([0, 0, bayonet_spring_h(S, spring_preload)]) mirror([0, 0, 1]) bayonet_spring(S, spring_t, spring_preload, spring_base_h);
 else color("SteelBlue") render(convexity = 8)
     if (orientation == "lens_down") translate([0, 0, z_top]) mirror([0, 0, 1]) adapter();
     else translate([0, 0, l]) adapter();

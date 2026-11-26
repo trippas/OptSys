@@ -29,7 +29,7 @@ detents = [0.2, 0.35, 0.5];
 // Spring lip thicknesses, one TPU ring each (sets the force)
 spring_t = [0.5, 0.7, 0.9];
 // Spring compression when locked
-preload = 0.3; // [0.1:0.05:1]
+preload = 0.6; // [0.1:0.05:1]
 
 /* [Bayonet] */
 // Diametral clearance of the bore for the Ø42 spigot (0.4 fits well with QM42)
@@ -63,7 +63,7 @@ entry_chamfer = 0.5; // [0.2:0.1:1.5]
 
 /* [Spring ring] */
 // Base ring height (sits under the flange)
-spring_base_h = 0.8; // [0.4:0.1:2]
+spring_base_h = 0.7; // [0.4:0.1:2]
 // Base ring radial width
 spring_base_w = 1.4; // [0.8:0.1:3]
 // Diametral interference of the base ring on the spigot

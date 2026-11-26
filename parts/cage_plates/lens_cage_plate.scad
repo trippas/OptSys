@@ -36,8 +36,8 @@ standard = "100mm"; // [100mm:100 mm - Ø8 rods at 85 mm (original), 70mm:70 mm 
 lens_mount = "thread"; // [thread:Lens + retaining ring thread, qm:QM quick-mount receptor (lock screw), bayonet:BQ bayonet receptor (push and turn)]
 // Bayonet interface (lib/standards.scad), with lens_mount = bayonet
 bq = "BQ42"; // [BQ42:BQ42 - Ø42 spigot, 3 lugs, 45 deg turn (as the test coupon)]
-// Depth of the detent pocket at the end of the turn (bayonet): the click. Use the value chosen with parts/test_coupons/bayonet_test
-bq_detent = 0.35; // [0:0.05:0.8]
+// Depth of the detent pocket at the end of the turn (bayonet): the click. 0.5 = tested with parts/test_coupons/bayonet_test
+bq_detent = 0.5; // [0:0.05:0.8]
 // Quick-mount interface (lib/standards.scad), with lens_mount = qm
 qm = "QM42"; // [QM42:QM42 - Ø42 x 7 spigot, Ø46 flange (OptSys 10 mm plates with 1.5 mm recesses), QM42-EPI:QM42-EPI - Ø42 x 10 spigot, Ø50 flange (EPI plates without recess)]
 // The seat face (flange underside) is placed so the lock screw is centered in the plate thickness: on the front recess floor if there is one, otherwise in a round flange pocket (needs plate_t = 10 for QM42 with 1.5 mm recesses)
@@ -260,7 +260,7 @@ thread_on = lens_mount == "thread";
 bq_on    = lens_mount == "bayonet";
 BQ       = bayonet_named(bq);
 bq_seat_z = z_ft;                                      // seat face: front recess floor or front face
-bq_spring_od = bayonet_spring_od(BQ, 0.3);             // default spring ring (0.3 preload)
+bq_spring_od = bayonet_spring_od(BQ, 0.6, 0.7);        // tested spring ring (0.6 preload, 0.7 base)
 qm_on    = lens_mount == "qm";
 qm_bc    = qm_bore_clearance;
 qm_angle = qm_screw_side == "right" ? 0 : qm_screw_side == "top" ? 90 : qm_screw_side == "left" ? 180 : 270;

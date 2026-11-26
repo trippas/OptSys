@@ -28,9 +28,9 @@ An OpenSCAD lens mount plate for a rod-based optical cage system. Each plate hol
 
 ### Bayonet receptor (`lens_mount = bayonet`, experimental)
 
-Ø42.4 bore with 3 notches, a groove under a 45° ledge and a detent pocket at the end of a 45° clockwise turn ([`lib/bayonet.scad`](../../lib/bayonet.scad), interface `BQ42` in `lib/standards.scad`, the same values as the [bayonet test coupon](../test_coupons/README.md)). The seat face is the front recess floor (or the front face); the adapter flange stays 1.8 mm above it on a printed TPU spring ring ([`parts/quick_mount`](../quick_mount/README.md), `part = spring`). `bq_detent` sets the pocket depth (0.35 by default: use the one you chose with the coupon). No screw or nut.
+Ø42.4 bore with 3 notches, a groove under a 45° ledge and a detent pocket at the end of a 45° clockwise turn ([`lib/bayonet.scad`](../../lib/bayonet.scad), interface `BQ42` in `lib/standards.scad`, the same values as the [bayonet test coupon](../test_coupons/README.md)). The seat face is the front recess floor (or the front face); the adapter flange stays 1.8 mm above it on a printed TPU spring ring ([`parts/quick_mount`](../quick_mount/README.md), `part = spring`). `bq_detent` sets the pocket depth (0.5 by default, the tested value). No screw or nut.
 
-Fits the 70 and 100 mm plates with recesses. On the 60 mm plate the groove (Ø46.2) needs Ø4 magnets and the spring ring (Ø47.1) does not fit on the 47 mm recess floor: disable `recess_front` there.
+Fits the 70 and 100 mm plates with recesses. On the 60 mm plate the groove (Ø46.2) needs Ø4 magnets and the spring ring (Ø47.9) does not fit on the 47 mm recess floor: disable `recess_front` there.
 
 ## Usage
 
