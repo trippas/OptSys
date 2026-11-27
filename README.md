@@ -75,14 +75,28 @@ Open parts from their folder inside the repository: they load the library throug
    - Wrap heavy subtrees in `render()` so the F5 preview keeps working.
 4. Add a `README.md` and an image, list the part in the table above, and run `tools/check.sh`.
 
+## Editing with VS Code
+
+The repository includes a `.vscode/` folder. The suggested workflow uses two windows:
+
+- **VS Code** for editing the `.scad` files, Git (branches, diffs, commits) and running the check. Open the repository folder; VS Code offers the recommended extensions (OpenSCAD language support and Claude Code).
+- **OpenSCAD** for the preview and the Customizer. Open the part, then enable *Design → Automatic Reload and Preview* and *View → Hide Editor*: every save in VS Code refreshes the preview.
+
+Presets (`<part>.json`) are written by the OpenSCAD Customizer. Edit them from one program at a time, and close old OpenSCAD windows before saving presets: OpenSCAD reads the `.json` only when it opens the file.
+
+`Ctrl+Shift+B` runs `tools/check.sh`. On Windows it runs in Git Bash (installed with Git for Windows).
+
+Line endings are LF everywhere (`.gitattributes`), so diffs only show real changes on Windows too.
+
 ## Checking
 
 ```
-tools/check.sh            # uses `openscad` from PATH
+tools/check.sh            # finds OpenSCAD in PATH or in C:\Program Files\OpenSCAD*
 OPENSCAD=openscad-nightly tools/check.sh
+OPENSCAD="/c/Program Files/OpenSCAD (Nightly)/openscad.com" tools/check.sh
 ```
 
-It compiles every part with its defaults and with each preset of its `.json`, and fails on any error or warning.
+It compiles every part with its defaults and with each preset of its `.json`, and fails on any error or warning. It needs Python (`python3`, `python` or `py`) to read the presets.
 
 Exported meshes (`*.stl`, `*.3mf`) are not tracked; regenerate them from the `.scad` files.
 

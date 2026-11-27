@@ -1,0 +1,9 @@
+{
+    // VS Code offers these when the folder is opened (Extensions → Recommended).
+    // Install only one OpenSCAD extension: two of them registering the same
+    // language conflict.
+    "recommendations": [
+        "Leathong.openscad-language-support",
+        "Anthropic.claude-code"
+    ]
+}

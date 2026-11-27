@@ -6,3 +6,6 @@
 *.amf
 *.off
 *.csg
+
+# Local backups of Customizer presets
+.presets_backup/
