@@ -1,0 +1,24 @@
+{
+    // Match the repository style (see .gitattributes).
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+
+    // OpenSCAD reloads the file on every save when "Automatic Reload and
+    // Preview" is on, so don't save on each keystroke.
+    "files.autoSave": "off",
+
+    // Hide generated and backup files from the explorer and from search.
+    "files.exclude": {
+        "**/*.stl": true,
+        "**/*.3mf": true,
+        "**/*.gcode": true,
+        "**/*.csg": true
+    },
+    "search.exclude": {
+        ".presets_backup": true
+    }
+}

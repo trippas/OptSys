@@ -1,0 +1,10 @@
+# LF line endings in the repository and in every checkout, on every OS.
+# OpenSCAD and VS Code read LF fine on Windows, and this keeps diffs free of
+# line-ending-only changes (e.g. when OpenSCAD rewrites a presets .json).
+* text=auto eol=lf
+
+# Binary files: never convert.
+*.png binary
+*.jpg binary
+*.stl binary
+*.3mf binary
