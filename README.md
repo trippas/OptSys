@@ -85,3 +85,9 @@ OPENSCAD=openscad-nightly tools/check.sh
 It compiles every part with its defaults and with each preset of its `.json`, and fails on any error or warning.
 
 Exported meshes (`*.stl`, `*.3mf`) are not tracked; regenerate them from the `.scad` files.
+
+## License
+
+OptSys is licensed under the [CERN Open Hardware Licence Version 2 – Permissive](LICENSE) (CERN-OHL-P-2.0). You may use, modify, make and distribute the designs and products made from them, including in closed or commercial work, as long as you keep the licence notices, mark any changes you make to the source, and give recipients of the source a copy of the licence. The designs come with no warranty.
+
+SPDX-License-Identifier: CERN-OHL-P-2.0
