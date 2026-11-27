@@ -7,7 +7,9 @@ Notes for Claude working in this repository. Read `README.md` first: it has the 
 - The owner writes in Spanish (Argentina): answer in Spanish. Code, comments, READMEs, commit messages and PRs stay in English.
 - Windows clone at `C:\Users\T14S GEN 2\OptSys`, edited in VS Code; terminal is PowerShell or Git Bash. OpenSCAD **nightly** with the **Manifold** backend, open next to VS Code with *Automatic Reload and Preview* and the editor hidden.
 - Printer: Snapmaker U1 (toolchanger), sliced in Snapmaker Orca. Plates print in a **single material**; TPU 95A only where a part needs it (bayonet spring ring, printed bellows). Filaments on hand: PLA, PETG HS black, PETG-CF, TPU 95A.
-- The owner tests parts physically and reports back; tested values become defaults (see PR #6: `bq_detent` 0.5, spring ring 0.9 / 0.7 / 0.6).
+- The owner tests parts physically and reports back; tested values become defaults. Tested so far:
+  - QM receptor bore: `qm_bore_clearance` **0.4** fits perfectly (60 mm plate + M39 adapter). The plate default is still 0.3: ask before changing it.
+  - BQ42 bayonet: `bq_detent` 0.5; TPU spring ring lip 0.9, base 0.7, preload 0.6 (PR #6, now the defaults).
 
 ## Owner preferences (apply to every part)
 
@@ -18,6 +20,12 @@ Notes for Claude working in this repository. Read `README.md` first: it has the 
 - Dimensions for the user go to the console (`echo`) and to **preview-only annotations called with `%`** (`show_dims`); never engraved or exported in the part.
 - Customizer groups ordered by use: Output, Standard and the main interface first; fine geometry and Quality last.
 - The presets in the repo are the owner's: don't rename, reorder or "fix" their values without asking. If a preset fails `check.sh`, say so instead of changing it silently.
+
+## Interfaces that are easy to get wrong
+
+- Enlarger lenses (El-Nikkor etc.) are **L39** (39 mm × 26 TPI, pitch ≈ 0.977), not M39×1: over 4 turns the pitch error binds the thread before the shoulder seats. Use `thread = L39` for them. The owner's own `m39x1` preset (0.7 clearance) works for their lenses: keep it.
+- `QM42` (spigot 7, lock screw at 3.5 below the seat, Ø46 flange; for 10 mm plates with 1.5 mm bellows recesses on both faces) and `QM42-EPI` (the original EPI interface: spigot 10, Ø50 flange, screw at 5) are **not interchangeable**. `BQ42` (bayonet) is a third, separate interface.
+- SM threads (40 TPI = 0.635 mm pitch) are at the limit of FDM; OptSys's own threads use 1.5 mm pitch. Test before relying on a printed SM thread.
 
 ## Presets (`<part>.json`)
 
@@ -41,6 +49,7 @@ Notes for Claude working in this repository. Read `README.md` first: it has the 
 11. Before diagnosing a fit problem from a printed part, **measure the owner's STL**: OpenSCAD exports the last F6 render, which may be stale.
 12. Non-fatal messages start with `Note:`; never print the word WARNING (`check.sh` treats it as a failure).
 13. Line endings are LF (`.gitattributes`); diffs that only change CRLF are noise, not edits.
+14. With OpenSCAD 2021, `-p file.json -P preset` ignores some `-D` overrides: for scripts, write a temporary `.json` with the preset plus the changes.
 
 ## Checking
 
@@ -55,8 +64,18 @@ Notes for Claude working in this repository. Read `README.md` first: it has the 
 - Never commit to `main`: every change goes on a branch and a PR; the owner reviews and merges.
 - Commit only what the task changed; never commit `.presets_backup/`, STL, 3MF or G-code.
 - Ask before deleting branches, force-pushing, or discarding local changes (`git checkout -- .`, `git reset --hard`, `git stash drop`); restore single files after checking them instead.
-- Open branch not yet merged: `printed-bellows` (printed TPU bellows with PLA spacers and PETG frames, `lib/bellows.scad`); untested on the printer. An iris diaphragm branch exists only as a patch from an earlier session.
+- Open branch not yet merged: `printed-bellows` (printed TPU bellows with PLA spacers and PETG frames, `lib/bellows.scad`); untested on the printer. It predates the 70 mm standard: its `OPTSYS_BELLOWS_RECESS` has only 50/60/100, so when merging add `70mm` (recess floor 57, magnets Ø5 at ±23.3, as in the 70 mm plate) to the table and to the bellows presets.
+- An iris diaphragm branch exists only as a patch from an earlier session. When picking it up, apply the owner's preferences (captive nuts, `%` dimensions, Customizer groups by use).
 
 ## Pending ideas
 
-Blind and adapter cage plates (30↔60), 30 mm lens plate, retaining rings and lens tubes, C-mount adapter, kinematic mirror mount, filter holder, cage cube, post holders and breadboard adapters, magnetic frame for the paper bellows, printed bellows for the owner's lathe and mill, round and 4-blade rectangular irises (including large ones for Durst Laborator Latico condensers), rail accessories (cage adapters, end stops, breadboard feet), better Z-on-XY carriage stacking. Standa compatibility: verify their system before designing for it.
+Roughly by priority (the owner decides what comes next):
+
+- **Alignment and adjustment:** XY centering mount (a QM42 / BQ42 receptor in an inner ring moved by two screws against a spring or flexure); focus plate driven along the rods by a screw against a fixed plate; kinematic mirror mount; alignment discs (crosshair, pinhole) that fit the QM / BQ42 receptor or the lens thread.
+- **Beam path:** cage cube with a filter / dichroic slider (port of the owner's EPI design to the OptSys standards); filter holders (round and square); rigid light-tight tubes between plates and fixed baffles, for where a bellows isn't needed.
+- **Ends of the optical train:** LED source plate with heatsink and diffuser; microscope slide holder (76 × 26); negative carrier for the enlarger; camera end plate (M42 / T2 / C-mount).
+- **Cage basics:** blind / end plates; adapter plates between the OptSys standards (50 / 60 / 70 / 100) and to Thorlabs 30 mm; 30 mm lens plate; rod couplers to extend rods; retaining rings and lens tubes; C-mount adapter.
+- **Mounting:** post holders and breadboard (M6) adapters; rail accessories (carriage-to-cage adapter, end stops, breadboard feet); better Z-on-XY carriage stacking (4 fixings with nuts instead of 2 self-tapping screws).
+- **Bellows and irises:** magnetic frame for the paper bellows; printed bellows for the owner's lathe and mill (open profile with `lib/bellows.scad`); round and 4-blade rectangular irises, including large ones for Durst Laborator Latico condensers.
+- Standa compatibility: verify their system before designing for it.
+- Candidate for `lib/clamps.scad`: the compliant rod clamp with V seat, once a second part needs it.
